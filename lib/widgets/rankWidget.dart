@@ -1,0 +1,57 @@
+import 'package:RLRank/providers/trackerData.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+
+class RankWidget extends StatelessWidget {
+  // final String _imageUrl = "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-5.png";
+  final PlaylistRank rank;
+  RankWidget(this.rank);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.grey[800], width: 1)),
+      margin: EdgeInsets.all(3),
+      child: ListTile(
+        onTap: () =>
+            {Navigator.of(context).pushNamed("rank", arguments: rank.name)},
+        title: Text(rank.name),
+        leading: Hero(
+            tag: "icon_" + rank.name,
+            child: CachedNetworkImage(
+                placeholder: (c, a) => CircularProgressIndicator(),
+                imageUrl: rank.tierIcon)),
+        subtitle: Text("" +
+            rank.mmr.toString() +
+            " - " +
+            rank.tierName +
+            " " +
+            rank.divisionName),
+        trailing: Container(
+          width: 55,
+          height: 50,
+          child: Row(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  if (rank.divUp != null)
+                    Row(children: [
+                      Icon(Icons.arrow_drop_up, color: Colors.green),
+                      Text(rank.divUp.toString())
+                    ]),
+                  if (rank.divDown != null)
+                    Row(children: [
+                      Icon(Icons.arrow_drop_down, color: Colors.red),
+                      Text(rank.divDown.toString())
+                    ]),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

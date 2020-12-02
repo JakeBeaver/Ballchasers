@@ -1,0 +1,160 @@
+import 'package:RLRank/providers/trackerData.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+class MatchWidget extends StatelessWidget {
+  final Match match;
+  MatchWidget(this.match);
+  final tf = DateFormat('HH:mm');
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: Colors.grey[700],
+        ),
+      ),
+      width: double.infinity,
+      child: Column(
+        children: <Widget>[
+          Text(tf.format(match.dateCollected.toLocal()),
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          Wrap(
+            alignment: WrapAlignment.spaceEvenly,
+            children: <Widget>[
+              lt(
+                title: Row(
+                  children: [
+                    whiteTitle(match.result),
+                    if (match.mvp) goldTitle(" MVP")
+                  ],
+                ),
+                subtitle: blueTitle(match.playlist),
+              ),
+              lt(
+                leading: CachedNetworkImage(
+                  placeholder: (c,a) => CircularProgressIndicator(),
+                  imageUrl: match.iconUrl,
+                ),
+                title: Row(
+                  children: <Widget>[
+                    whiteTitle(match.mmr.toString()),
+                    gainWidget(match.ratingDelta),
+                  ],
+                ),
+                subtitle: blueTitle(match.division),
+              ),
+              lt(
+                title: blueTitle("Goals / Shots"),
+                subtitle: Row(
+                  children: [
+                    whiteTitle(match.goals.toString() +
+                        " / " +
+                        match.shots.toString()),
+                    if (match.shots != 0)
+                      blueTitle(
+                        "  (" +
+                            ((match.goals) / (match.shots) * 100)
+                                .round()
+                                .toString() +
+                            "%)",
+                      ),
+                  ],
+                ),
+              ),
+              lt(
+                title: Row(
+                  children: <Widget>[
+                    blueTitle("Assists: "),
+                    whiteTitle(match.assists.toString()),
+                  ],
+                ),
+                subtitle: Row(
+                  children: <Widget>[
+                    blueTitle("Saves: "),
+                    whiteTitle(match.saves.toString()),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget whiteTitle(String text, {double sizeAdjust = 0}) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 18 + sizeAdjust,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget goldTitle(String text, {double sizeAdjust = 0}) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 18 + sizeAdjust,
+        fontWeight: FontWeight.bold,
+        color: Color(0xffcbb765),
+      ),
+    );
+  }
+
+  Widget blueTitle(String text, {double sizeAdjust = 0}) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 14 + sizeAdjust,
+        fontWeight: FontWeight.bold,
+        color: Color(0xffb5d0ff),
+      ),
+    );
+  }
+
+  Widget lt({Widget leading, Widget title, Widget subtitle}) {
+    return Container(
+      // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
+      width: 170,
+      child: ListTile(
+        contentPadding: EdgeInsets.all(0),
+        dense: true,
+        leading: leading,
+        title: title,
+        subtitle: subtitle,
+      ),
+    );
+  }
+
+  Widget gainWidget(int gain) {
+    if (gain == null) {
+      print("a");
+    }
+    bool up = gain > 0;
+    Color color = up ? Colors.green : Colors.red;
+    if (!up) gain = -gain;
+    return Row(
+      children: <Widget>[
+        SizedBox(width: 4),
+        Text(
+          gain.toString(),
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        Icon(
+          up ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+          color: color,
+        ),
+      ],
+    );
+  }
+}
