@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 class RankScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+  final double arrowWidth = 45;
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<TrackerData>(context);
@@ -34,16 +35,17 @@ class RankScreen extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     iconUp(visible: false),
-                    Text(rank.divUp?.toString() ?? "",
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold)),
+                    Text(
+                      rank.divUp?.toString() ?? "",
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
               ],
             ),
-          
           if (rank.divUp != null && rank.divDown != null)
-            SizedBox(width: 20),
+            SizedBox(width: arrowWidth),
           if (rank.divDown != null)
             Row(
               // alignment: Alignment.bottomCenter,
@@ -86,27 +88,25 @@ class RankScreen extends StatelessWidget {
         child: mq.orientation == Orientation.portrait
             ? ListView(children: [SizedBox(height: 20), ...children, icon])
             : Center(
-                child: FittedBox(
-                  child: SingleChildScrollView(
-                    child: Container(
-                      height: mq.size.height -
-                          mq.viewInsets.top -
-                          mq.viewPadding.top -
-                          mq.viewPadding.bottom -
-                          mq.viewInsets.bottom -
-                          appbar.preferredSize.height +
-                          1,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          icon,
-                          FittedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: children),
-                          )
-                        ],
-                      ),
+                child: SingleChildScrollView(
+                  child: Container(
+                    height: mq.size.height -
+                        mq.viewInsets.top -
+                        mq.viewPadding.top -
+                        mq.viewPadding.bottom -
+                        mq.viewInsets.bottom -
+                        appbar.preferredSize.height +
+                        1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        icon,
+                        FittedBox(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: children),
+                        )
+                      ],
                     ),
                   ),
                 ),
@@ -121,7 +121,8 @@ class RankScreen extends StatelessWidget {
   Widget iconDown({bool visible = true, bool isUp = false}) {
     var color = isUp ? Colors.green : Colors.red;
     return Container(
-      width: 45,
+      // decoration: BoxDecoration(border: Border.all(color: Colors.white)),
+      width: arrowWidth,
       child: Stack(
         alignment: Alignment.center,
         children: [
