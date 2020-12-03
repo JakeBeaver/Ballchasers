@@ -1,4 +1,4 @@
-package com.example.RLRank
+package com.jay_beaver.BallChasers
 
 import io.flutter.embedding.android.FlutterActivity
 
