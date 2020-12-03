@@ -134,7 +134,10 @@ class MatchWidget extends StatelessWidget {
 
   Widget gainWidget(int gain) {
     if (gain == null) {
-      print("a");
+      return Padding(
+        padding: const EdgeInsets.only(left: 4.0),
+        child: Icon(Icons.star, color: Color(0xffcbb765)),
+      );
     }
     bool up = gain > 0;
     Color color = up ? Colors.green : Colors.red;

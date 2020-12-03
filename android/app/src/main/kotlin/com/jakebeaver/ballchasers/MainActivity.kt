@@ -1,4 +1,4 @@
-package com.jay_beaver.BallChasers
+package com.jakebeaver.ballchasers
 
 import io.flutter.embedding.android.FlutterActivity
 
