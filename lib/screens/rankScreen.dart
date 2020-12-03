@@ -66,18 +66,24 @@ class RankScreen extends StatelessWidget {
       ),
     ];
 
+    var mq = MediaQuery.of(context);
+
     var icon = Container(
-      child: Hero(
-          tag: "icon_" + rank.name,
-          child: CachedNetworkImage(
-              placeholder: (c, a) => CircularProgressIndicator(),
-              imageUrl: rank.tierIcon)),
+      child: Align(
+        heightFactor: mq.orientation == Orientation.portrait ? 0.8 : 1,
+        widthFactor:  mq.orientation == Orientation.portrait ? 0.8 : 1,
+        child: Hero(
+            tag: "icon_" + rank.name,
+            child: CachedNetworkImage(
+                placeholder: (c, a) => CircularProgressIndicator(),
+                imageUrl: rank.tierIcon)),
+      ),
     );
+
     AppBar appbar = AppBar(
       title: Text(rank.name),
       backgroundColor: Color(0xff041d59),
     );
-    var mq = MediaQuery.of(context);
     return Scaffold(
       key: scaffoldKey,
       floatingActionButton: prov.disconnectedIcon(scaffoldKey),
@@ -96,17 +102,19 @@ class RankScreen extends StatelessWidget {
                         mq.viewPadding.bottom -
                         mq.viewInsets.bottom -
                         appbar.preferredSize.height +
-                        1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        icon,
-                        FittedBox(
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: children),
-                        )
-                      ],
+                        0.001,
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          icon,
+                          FittedBox(
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: children),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
