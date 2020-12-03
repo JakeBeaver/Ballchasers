@@ -17,7 +17,7 @@ class RankScreen extends StatelessWidget {
     var children = <Widget>[
       Center(
           child: Text(
-        rank.tierName + " " + rank.divisionName,
+        rank.tierName + "\n" + rank.divisionName,
         style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         textAlign: TextAlign.center,
       )),
@@ -84,6 +84,9 @@ class RankScreen extends StatelessWidget {
       title: Text(rank.name),
       backgroundColor: Color(0xff041d59),
     );
+
+    bool isPortraitList = mq.size.aspectRatio < 1.5;
+
     return Scaffold(
       key: scaffoldKey,
       floatingActionButton: prov.disconnectedIcon(scaffoldKey),
@@ -91,7 +94,7 @@ class RankScreen extends StatelessWidget {
       appBar: appbar,
       body: RefreshIndicator(
         onRefresh: () => prov.refresh(context),
-        child: mq.orientation == Orientation.portrait
+        child: isPortraitList
             ? ListView(children: [SizedBox(height: 20), ...children, icon])
             : Center(
                 child: SingleChildScrollView(
@@ -107,12 +110,12 @@ class RankScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          icon,
                           FittedBox(
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: children),
-                          )
+                          ),
+                          icon,
                         ],
                       ),
                     ),

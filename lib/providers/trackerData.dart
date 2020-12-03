@@ -174,6 +174,7 @@ class TrackerData with ChangeNotifier {
             backgroundColor: Colors.black.withOpacity(0),
             child: Image(image: AssetImage("assets/disconnected.png")),
             onPressed: () {
+              scaffoldKey.currentState.hideCurrentSnackBar();
               scaffoldKey.currentState.showSnackBar(
                 SnackBar(
                   backgroundColor: Colors.red[800],

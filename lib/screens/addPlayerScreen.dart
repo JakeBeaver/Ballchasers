@@ -96,6 +96,7 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
                               Navigator.of(context).pop();
                             }
                           } catch (ex) {
+                            scaffoldKey.currentState.hideCurrentSnackBar();
                             scaffoldKey.currentState.showSnackBar(snackBar);
                             setState(() {
                               finding = false;
