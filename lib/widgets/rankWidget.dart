@@ -9,8 +9,12 @@ class RankWidget extends StatelessWidget {
   RankWidget(this.rank);
   @override
   Widget build(BuildContext context) {
+    var mq = MediaQuery.of(context);
+    var screenWidth = mq.size.width - mq.viewInsets.left - mq.viewInsets.right;
+    var maxCount = (screenWidth/(375+7)).floor();
+    var width = (screenWidth/maxCount) -7; // padding;;
     return Container(
-     constraints: BoxConstraints(maxWidth: 400),
+     constraints: BoxConstraints(maxWidth: width),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: Colors.grey[800], width: 1)),
