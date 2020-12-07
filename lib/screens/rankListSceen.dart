@@ -64,14 +64,16 @@ class _RankListScreenState extends State<RankListScreen> {
           body: RefreshIndicator(
             onRefresh: () => prov.refresh(context),
             child: prov.isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? loadingData()
                 : ListView(
                     shrinkWrap: true,
                     children: [
                       if (prov.playlistRanks != null)
-                        ...prov.playlistRanks
-                            .map((x) => RankWidget(x))
-                            .toList(),
+                        Wrap(
+                            alignment: WrapAlignment.spaceEvenly,
+                            children: prov.playlistRanks
+                                .map((x) => RankWidget(x))
+                                .toList()),
                       if ((prov.sessions?.length ?? 0) > 0)
                         SizedBox(height: 20),
                       if ((prov.sessions?.length ?? 0) > 0)
@@ -131,7 +133,7 @@ class _RankListScreenState extends State<RankListScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
                             border:
-                                Border.all(color: Color(0xffab9745), width:5),
+                                Border.all(color: Color(0xffab9745), width: 5),
                           ),
                         ),
                       ],
@@ -161,6 +163,32 @@ class _RankListScreenState extends State<RankListScreen> {
       ],
     );
   }
+
+  Widget loadingData() => Center(
+        child: FittedBox(
+          child: Column(
+            children: [
+              Container(
+                  height: 100,
+                  child: Image.asset('assets/octane_drawing_adaptive.png')),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(width: 20),
+                  Text(
+                    "Fetching tracker data...",
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 60),
+            ],
+          ),
+        ),
+      );
 
   Widget helpText(String text, [double adjustSize = 0]) {
     return Text(

@@ -12,10 +12,12 @@ class SessionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final nOfMatches =
+        session.matches.map((x) => x.matches).fold(0, (x, y) => x + y);
     final String title =
         df.format(session.matches.last.dateCollected.toLocal()) +
-            session.matches.length.toString() +
-            (session.matches.length == 1 ? " Match" : " Matches");
+            nOfMatches.toString() +
+            (nOfMatches == 1 ? " Match" : " Matches");
     return Column(
       children: <Widget>[
         SizedBox(height: 10),

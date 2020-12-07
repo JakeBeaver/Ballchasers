@@ -1,4 +1,5 @@
 import 'package:RLRank/providers/trackerData.dart';
+import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -9,25 +10,40 @@ class RankWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+     constraints: BoxConstraints(maxWidth: 400),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: Colors.grey[800], width: 1)),
       margin: EdgeInsets.all(3),
       child: ListTile(
+        isThreeLine: true,
+        dense: true,
         onTap: () =>
             {Navigator.of(context).pushNamed("rank", arguments: rank.name)},
-        title: Text(rank.name),
+        title: blueTitle(rank.name, sizeAdjust: 2),
         leading: Hero(
             tag: "icon_" + rank.name,
             child: CachedNetworkImage(
                 placeholder: (c, a) => CircularProgressIndicator(),
                 imageUrl: rank.tierIcon)),
-        subtitle: Text("" +
-            rank.mmr.toString() +
-            " - " +
-            rank.tierName +
-            " " +
-            rank.divisionName),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                whiteTitle("" + rank.mmr.toString()),
+                Text(" · " + rank.tierName + " " + rank.divisionName),
+              ],
+            ),
+            Row(children: [
+              Text("${rank.matchesPlayed} games · "),
+              if (rank.winStreak > 0)
+                winStreakTitle("Win strk ${rank.winStreak}"),
+              if (rank.lossStreak > 0)
+                lossStreakTitle("Loss strk ${rank.lossStreak}"),
+            ]),
+          ],
+        ),
         trailing: Container(
           width: 55,
           height: 50,

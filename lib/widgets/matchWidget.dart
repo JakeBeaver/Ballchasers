@@ -1,4 +1,5 @@
 import 'package:RLRank/providers/trackerData.dart';
+import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,9 +7,11 @@ import 'package:intl/intl.dart';
 class MatchWidget extends StatelessWidget {
   final Match match;
   MatchWidget(this.match);
+
   final tf = DateFormat('HH:mm');
   @override
   Widget build(BuildContext context) {
+    final nOfMatches = match.matches;
     return Container(
       margin: EdgeInsets.all(4),
       decoration: BoxDecoration(
@@ -20,23 +23,37 @@ class MatchWidget extends StatelessWidget {
       width: double.infinity,
       child: Column(
         children: <Widget>[
-          Text(tf.format(match.dateCollected.toLocal()),
-              style: TextStyle(fontWeight: FontWeight.bold)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              blueTitle(
+                nOfMatches.toString() +
+                    (nOfMatches == 1 ? " Match" : " Matches"),
+                sizeAdjust: 1,
+              ),
+              whiteTitle(
+                " - " + tf.format(match.dateCollected.toLocal()),
+                sizeAdjust: -3,
+              ),
+            ],
+          ),
           Wrap(
             alignment: WrapAlignment.spaceEvenly,
             children: <Widget>[
-              lt(
+              matchListTile(
                 title: Row(
                   children: [
                     whiteTitle(match.result),
-                    if (match.mvp) goldTitle(" MVP")
+                    if (match.isMvp)
+                      goldTitle(
+                          " ${match.matches > 1 ? (match.mvps.toString() + ' ') : ''}MVP")
                   ],
                 ),
                 subtitle: blueTitle(match.playlist),
               ),
-              lt(
+              matchListTile(
                 leading: CachedNetworkImage(
-                  placeholder: (c,a) => CircularProgressIndicator(),
+                  placeholder: (c, a) => CircularProgressIndicator(),
                   imageUrl: match.iconUrl,
                 ),
                 title: Row(
@@ -47,7 +64,7 @@ class MatchWidget extends StatelessWidget {
                 ),
                 subtitle: blueTitle(match.division),
               ),
-              lt(
+              matchListTile(
                 title: blueTitle("Goals / Shots"),
                 subtitle: Row(
                   children: [
@@ -65,7 +82,7 @@ class MatchWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              lt(
+              matchListTile(
                 title: Row(
                   children: <Widget>[
                     blueTitle("Assists: "),
@@ -86,39 +103,7 @@ class MatchWidget extends StatelessWidget {
     );
   }
 
-  Widget whiteTitle(String text, {double sizeAdjust = 0}) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 18 + sizeAdjust,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-
-  Widget goldTitle(String text, {double sizeAdjust = 0}) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 18 + sizeAdjust,
-        fontWeight: FontWeight.bold,
-        color: Color(0xffcbb765),
-      ),
-    );
-  }
-
-  Widget blueTitle(String text, {double sizeAdjust = 0}) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 14 + sizeAdjust,
-        fontWeight: FontWeight.bold,
-        color: Color(0xffb5d0ff),
-      ),
-    );
-  }
-
-  Widget lt({Widget leading, Widget title, Widget subtitle}) {
+    Widget matchListTile({Widget leading, Widget title, Widget subtitle}) {
     return Container(
       // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
       width: 170,

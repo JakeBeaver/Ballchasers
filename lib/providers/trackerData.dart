@@ -222,12 +222,16 @@ class Match {
   int assists;
   int goals;
   int shots;
-  bool mvp;
+  bool get isMvp => mvps > 0;
   String iconUrl;
   String tier;
   String division;
   int ratingDelta;
   int mmr;
+  int mvps;
+  bool get isMultipleMatches => matches > 1;
+  int matches;
+  int wins;
   Match(Map<String, dynamic> map) {
     goals = map["stats"]["goals"]["value"];
     if (goals == null) {
@@ -240,14 +244,20 @@ class Match {
     saves = map["stats"]["saves"]["value"];
     assists = map["stats"]["assists"]["value"];
     shots = map["stats"]["shots"]["value"];
-    mvp = map["stats"]["mvps"]["value"] == 1;
+    mvps = map["stats"]["mvps"]["value"];
     iconUrl = map["stats"]["rating"]["metadata"]["iconUrl"];
     tier = map["stats"]["rating"]["metadata"]["tier"];
     division = map["stats"]["rating"]["metadata"]["division"];
     ratingDelta = map["stats"]["rating"]["metadata"]["ratingDelta"];
     mmr = map["stats"]["rating"]["value"];
+    matches = map["stats"]["matchesPlayed"]["value"];
+    wins = map["stats"]["wins"]["value"];
 
     result = capitalize(result.replaceAll("victory", "win"));
+
+    if (matches > 1 && wins == 1) {
+      result = '1 Win';
+    }
   }
 }
 
@@ -261,9 +271,18 @@ class PlaylistRank {
   String divisionName;
   int divDown;
   int divUp;
+  int matchesPlayed;
+  int winStreak = 0;
+  int lossStreak = 0;
   PlaylistRank(Map<String, dynamic> map) {
     type = map["type"];
     if (type != "playlist") {
+      display = false;
+      return;
+    }
+
+    matchesPlayed = map["stats"]["matchesPlayed"]["value"];
+    if (matchesPlayed == 0) {
       display = false;
       return;
     }
@@ -272,10 +291,20 @@ class PlaylistRank {
     mmr = map["stats"]["rating"]["value"];
 
     tierIcon = map["stats"]["tier"]["metadata"]["iconUrl"];
-    tierName = map["stats"]["tier"]["metadata"]["name"];
-    divisionName = map["stats"]["division"]["metadata"]["name"];
+    tierName = map["stats"]["tier"]["metadata"]["name"]
+        .replaceAll("Champion", "Champ");
+    divisionName = map["stats"]["division"]["metadata"]["name"]
+        .replaceAll("Division", "Div");
+    // divisionName.;
     divDown = map["stats"]["division"]["metadata"]["deltaDown"];
     divUp = map["stats"]["division"]["metadata"]["deltaUp"];
+    int streak = map["stats"]["winStreak"]["value"];
+    bool isWinStreak = map["stats"]["winStreak"]["metadata"]["type"] == 'win';
+    if (isWinStreak) {
+      winStreak = streak;
+    } else {
+      lossStreak = streak;
+    }
   }
 }
 
