@@ -43,20 +43,26 @@ Widget deepBlueTitle(String text, {double sizeAdjust = 0}) {
   );
 }
 
-Widget winStreakTitle(String text, {double sizeAdjust = 0}) {
-  return Text(
-    text,
-    style: TextStyle(
-      // fontSize: 14 + sizeAdjust,
-      fontWeight: FontWeight.bold,
-      color: Color(0xff2b9fea),
-    ),
-  );
-}
-
 Widget lossStreakTitle(String text, {double sizeAdjust = 0}) {
   return Row(
     children: [
+      Icon(Icons.ac_unit, color: Color(0xff2b9fea), size: 20),
+      Text(
+        text,
+        style: TextStyle(
+          // fontSize: 14 + sizeAdjust,
+          fontWeight: FontWeight.bold,
+          color: Color(0xff2b9fea),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget winStreakTitle(String text, {double sizeAdjust = 0}) {
+  return Row(
+    children: [
+      Icon(Icons.whatshot, color: Color(0xffe68617), size:20),
       Text(
         text,
         style: TextStyle(

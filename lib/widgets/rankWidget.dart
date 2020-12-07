@@ -11,10 +11,10 @@ class RankWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var mq = MediaQuery.of(context);
     var screenWidth = mq.size.width - mq.viewInsets.left - mq.viewInsets.right;
-    var maxCount = (screenWidth/(375+7)).floor();
-    var width = (screenWidth/maxCount) -7; // padding;;
+    var maxCount = (screenWidth / (375 + 7)).floor();
+    var width = (screenWidth / maxCount) - 7; // padding;;
     return Container(
-     constraints: BoxConstraints(maxWidth: width),
+      width: width,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: Colors.grey[800], width: 1)),
@@ -34,18 +34,25 @@ class RankWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 whiteTitle("" + rank.mmr.toString()),
-                Text(" · " + rank.tierName + " " + rank.divisionName),
+                // Container(),
+                Text(" • " + rank.tierName + " " + rank.divisionName),
+                // Container(),
               ],
             ),
-            Row(children: [
-              Text("${rank.matchesPlayed} games · "),
-              if (rank.winStreak > 0)
-                winStreakTitle("Win strk ${rank.winStreak}"),
-              if (rank.lossStreak > 0)
-                lossStreakTitle("Loss strk ${rank.lossStreak}"),
-            ]),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text("${rank.matchesPlayed} games  "),
+                if (rank.winStreak > 0)
+                  winStreakTitle("Win strk: ${rank.winStreak}"),
+                if (rank.lossStreak > 0)
+                  lossStreakTitle("Loss strk: ${rank.lossStreak}"),
+                // Container(),
+              ],
+            ),
           ],
         ),
         trailing: Container(
@@ -59,12 +66,18 @@ class RankWidget extends StatelessWidget {
                   if (rank.divUp != null)
                     Row(children: [
                       Icon(Icons.arrow_drop_up, color: Colors.green),
-                      Text(rank.divUp.toString())
+                      Text(
+                        rank.divUp.toString(),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )
                     ]),
                   if (rank.divDown != null)
                     Row(children: [
                       Icon(Icons.arrow_drop_down, color: Colors.red),
-                      Text(rank.divDown.toString())
+                      Text(
+                        rank.divDown.toString(),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )
                     ]),
                 ],
               ),

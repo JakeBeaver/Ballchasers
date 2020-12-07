@@ -145,14 +145,16 @@ class _RankListScreenState extends State<RankListScreen> {
                         borderRadius: BorderRadius.circular(50),
                         border: Border.all(color: Color(0xffab9745), width: 5)),
                     alignment: Alignment.center,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        helpText("Pull down to refresh", 20),
-                        Icon(Icons.arrow_downward,
-                            color: Color(0xffab9745), size: 140),
-                      ],
+                    child: FittedBox(
+                                          child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          helpText("Pull down\nto refresh", 20),
+                          Icon(Icons.arrow_downward,
+                              color: Color(0xffab9745), size: 140),
+                        ],
+                      ),
                     ),
                   ),
                 ),
