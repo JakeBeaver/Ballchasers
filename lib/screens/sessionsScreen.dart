@@ -18,19 +18,22 @@ class SessionsScreen extends StatelessWidget {
       backgroundColor: Color(0xff001538),
       // appBar: appbar,
       floatingActionButton: prov.disconnectedIcon(scaffoldKey),
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            title: Text("Sessions"),
-            backgroundColor: Color(0xff041d59),
-            floating: true,
-          ),
-          new SliverList(
-            delegate: new SliverChildListDelegate(
-              prov.sessions.map((session) => SessionWidget(session)).toList(),
+      body: RefreshIndicator(
+        onRefresh: () => prov.refresh(context),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              title: Text("Sessions"),
+              backgroundColor: Color(0xff041d59),
+              floating: true,
             ),
-          ),
-        ],
+            new SliverList(
+              delegate: new SliverChildListDelegate(
+                prov.sessions.map((session) => SessionWidget(session)).toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
