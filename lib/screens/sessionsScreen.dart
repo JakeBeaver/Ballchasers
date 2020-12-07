@@ -8,10 +8,10 @@ class SessionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<TrackerData>(context);
-    AppBar appbar = AppBar(
-      title: Text("Sessions"),
-      backgroundColor: Color(0xff041d59),
-    );
+    // AppBar appbar = AppBar(
+    //   title: Text("Sessions"),
+    //   backgroundColor: Color(0xff041d59),
+    // );
     // var mq = MediaQuery.of(context);
     return Scaffold(
       key: scaffoldKey,
