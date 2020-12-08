@@ -29,7 +29,7 @@ class _RankListScreenState extends State<RankListScreen> {
       children: <Widget>[
         Scaffold(
           key: scaffoldKey,
-          floatingActionButton: prov.disconnectedIcon(scaffoldKey),
+          floatingActionButton: prov.disconnectedIcon(scaffoldKey: scaffoldKey),
           drawer: PlayerListDrawer(),
           backgroundColor: Color(0xff001538),
           appBar: AppBar(

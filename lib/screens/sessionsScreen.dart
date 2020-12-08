@@ -17,7 +17,7 @@ class SessionsScreen extends StatelessWidget {
       key: scaffoldKey,
       backgroundColor: Color(0xff001538),
       // appBar: appbar,
-      floatingActionButton: prov.disconnectedIcon(scaffoldKey),
+      floatingActionButton: prov.disconnectedIcon(scaffoldKey: scaffoldKey),
       body: RefreshIndicator(
         onRefresh: () => prov.refresh(context),
         child: CustomScrollView(

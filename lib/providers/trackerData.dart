@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:RLRank/providers/playersData.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -47,7 +48,6 @@ class TrackerData with ChangeNotifier {
     try {
       await Future.wait([
         fetchStats(),
-        // fetchDistribution(),
         fetchSessions(),
       ]);
       offline = false;
@@ -100,16 +100,6 @@ class TrackerData with ChangeNotifier {
         "/sessions";
   }
 
-  String getDistributionAddress() {
-    return "https://api.tracker.gg/api/v1/rocket-league/distribution/";
-  }
-
-  // Future fetchDistribution() async {
-  //   String address = getDistributionAddress();
-  //   final response = await http.get(address);
-  //   _distributionBody = json.decode(response.body) as Map<String, dynamic>;
-  // }
-
   Map<String, dynamic> _statsBody;
   Map<String, dynamic> _sessionsBody;
   // Map<String, dynamic> _distributionBody;
@@ -127,9 +117,10 @@ class TrackerData with ChangeNotifier {
         throw new Exception();
       }
     } finally {
+      var playerId = _statsBody["data"]["metadata"]["playerId"];
       var segments = _statsBody["data"]["segments"] as List<dynamic>;
       playlistRanks = segments
-          .map<PlaylistRank>((e) => PlaylistRank(e))
+          .map<PlaylistRank>((e) => PlaylistRank(e, playerId: playerId))
           .where((x) => x.display)
           .toList();
 
@@ -166,25 +157,31 @@ class TrackerData with ChangeNotifier {
     }
   }
 
-  Widget disconnectedIcon(GlobalKey<ScaffoldState> scaffoldKey) {
+  Widget disconnectedIcon({
+    GlobalKey<ScaffoldState> scaffoldKey,
+    String heroTag = "Disconnected Button Hero Tag",
+  }) {
     return offline
         ? FloatingActionButton(
+            heroTag: heroTag,
             elevation: 0,
             splashColor: Colors.black.withOpacity(0),
             backgroundColor: Colors.black.withOpacity(0),
             child: Image(image: AssetImage("assets/disconnected.png")),
-            onPressed: () {
-              scaffoldKey.currentState.hideCurrentSnackBar();
-              scaffoldKey.currentState.showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.red[800],
-                  content: Text(
-                    "Loading from tracker server failed. Showing cached info.",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
-            },
+            onPressed: scaffoldKey == null
+                ? null
+                : () {
+                    scaffoldKey.currentState.hideCurrentSnackBar();
+                    scaffoldKey.currentState.showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.red[800],
+                        content: Text(
+                          "Loading from tracker server failed. Showing cached info.",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  },
           )
         : null;
   }
@@ -262,6 +259,16 @@ class Match {
 }
 
 class PlaylistRank {
+  final int playerId;
+  String _getMMRAddress() {
+    return "https://api.tracker.gg/api/v1/rocket-league/player-history/mmr/$playerId/";
+  }
+
+  String _getDistributionAddress() {
+    return "https://api.tracker.gg/api/v1/rocket-league/distribution/$playlistId";
+  }
+
+  int playlistId;
   bool display = true;
   String type;
   String name;
@@ -274,7 +281,7 @@ class PlaylistRank {
   int matchesPlayed;
   int winStreak = 0;
   int lossStreak = 0;
-  PlaylistRank(Map<String, dynamic> map) {
+  PlaylistRank(Map<String, dynamic> map, {this.playerId}) {
     type = map["type"];
     if (type != "playlist") {
       display = false;
@@ -286,6 +293,9 @@ class PlaylistRank {
       display = false;
       return;
     }
+
+    playlistId = map["attributes"]["playlistId"];
+
     name = map["metadata"]["name"];
 
     mmr = map["stats"]["rating"]["value"];
@@ -305,6 +315,77 @@ class PlaylistRank {
     } else {
       lossStreak = streak;
     }
+  }
+
+  List<TierData> topDivisionTierDatas;
+  List<TierData> allTierDatas;
+  List<FlSpot> chartData;
+
+  Future<PlaylistRank> getChartData() async {
+    await Future.wait([
+      if (topDivisionTierDatas == null) _getDistributions(),
+      if (chartData == null) _getChartData(),
+    ]);
+    return this;
+  }
+
+  Future _getDistributions() async {
+    var address = _getDistributionAddress();
+    final response = await http.get(address);
+    var parsedResponse = json.decode(response.body) as Map<String, dynamic>;
+    var tiers = parsedResponse["data"]["tiers"] as List<dynamic>;
+    var divisions = parsedResponse["data"]["tiers"] as List<dynamic>;
+
+    var distributions = parsedResponse["data"]["data"] as List<dynamic>;
+    var newList = distributions.map(
+      (x) => TierData(
+        x,
+        tiers,
+        divisions,
+      ),
+    );
+
+    List<TierData> newerList = [];
+    for (TierData d in newList) {
+      if (newerList.isEmpty || newerList.last.tier != d.tier) {
+        newerList.add(d);
+      }
+    }
+    allTierDatas = newList.toList();
+    topDivisionTierDatas = newerList;
+  }
+
+  Future _getChartData() async {
+    var address = _getMMRAddress();
+    final response = await http.get(address);
+    var parsedResponse = json.decode(response.body) as Map<String, dynamic>;
+    var playlistData = parsedResponse["data"]["$playlistId"] as List<dynamic>;
+    var newData = playlistData
+        .map((x) => FlSpot(
+              DateTime.parse(x["collectDate"])
+                  .millisecondsSinceEpoch
+                  .toDouble(),
+              x["rating"].toDouble(),
+            ))
+        .toList();
+    chartData = newData;
+  }
+}
+
+class TierData {
+  int minMMR;
+  int maxMMR;
+  String tier;
+  String division;
+  TierData(
+    Map<String, dynamic> x,
+    List<dynamic> tiers,
+    List<dynamic> divisions,
+  ) {
+    minMMR = x["minMMR"];
+    maxMMR = x["maxMMR"];
+    tier = tiers[x["tier"]].replaceAll("Champion", "Champ");
+    division = divisions[x["division"]];
   }
 }
 

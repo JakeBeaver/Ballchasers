@@ -1,4 +1,5 @@
 import 'package:RLRank/providers/trackerData.dart';
+import 'package:RLRank/widgets/rankGraphWidget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -69,14 +70,17 @@ class RankScreen extends StatelessWidget {
     var mq = MediaQuery.of(context);
 
     var icon = Container(
-      child: Align(
-        heightFactor: mq.orientation == Orientation.portrait ? 0.8 : 1,
-        widthFactor:  mq.orientation == Orientation.portrait ? 0.8 : 1,
-        child: Hero(
-            tag: "icon_" + rank.name,
-            child: CachedNetworkImage(
-                placeholder: (c, a) => CircularProgressIndicator(),
-                imageUrl: rank.tierIcon)),
+      child: Opacity(
+        opacity: 0.4,
+        child: Align(
+          heightFactor: mq.orientation == Orientation.portrait ? 0.8 : 1,
+          widthFactor: mq.orientation == Orientation.portrait ? 0.8 : 1,
+          child: Hero(
+              tag: "icon_" + rank.name,
+              child: CachedNetworkImage(
+                  placeholder: (c, a) => CircularProgressIndicator(),
+                  imageUrl: rank.tierIcon)),
+        ),
       ),
     );
 
@@ -87,15 +91,27 @@ class RankScreen extends StatelessWidget {
 
     bool isPortraitList = mq.size.aspectRatio < 1.5;
 
+    var iconGraphStack = Stack(
+      fit: StackFit.passthrough,
+      alignment: Alignment.center,
+      children: [icon, RankGraphWidget(rank)],
+    );
+
     return Scaffold(
       key: scaffoldKey,
-      floatingActionButton: prov.disconnectedIcon(scaffoldKey),
+      floatingActionButton: prov.disconnectedIcon(scaffoldKey: scaffoldKey),
       backgroundColor: Color(0xff001538),
       appBar: appbar,
       body: RefreshIndicator(
         onRefresh: () => prov.refresh(context),
         child: isPortraitList
-            ? ListView(children: [SizedBox(height: 20), ...children, icon])
+            ? ListView(
+                children: [
+                  SizedBox(height: 20),
+                  ...children,
+                  iconGraphStack,
+                ],
+              )
             : Center(
                 child: SingleChildScrollView(
                   child: Container(
@@ -115,7 +131,7 @@ class RankScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: children),
                           ),
-                          icon,
+                          iconGraphStack
                         ],
                       ),
                     ),
