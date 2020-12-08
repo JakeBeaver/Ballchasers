@@ -345,9 +345,12 @@ class PlaylistRank {
         tiers,
         divisions,
       ),
-    ).where((x)=>x.tier != "Unranked" );
+    ).where((x)=>x.tier != "Unranked" ).toList();
 
     List<TierData> newerList = [];
+    for (int i = 1; i < newList.length; i++){
+      newList[i].minMMR = newList[i-1].maxMMR;
+    }
     for (TierData d in newList) {
       if (newerList.isEmpty || newerList.last.tier != d.tier) {
         newerList.add(d);

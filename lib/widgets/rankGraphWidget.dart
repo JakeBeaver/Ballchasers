@@ -203,13 +203,13 @@ class RankGraphWidget extends StatelessWidget {
 
     final tf = DateFormat("dd/MM/yyyy");
     var formattedDate = tf.format(date);
-    var maxMMR = tiers.last.maxMMR;
+    // var maxMMR = tiers.last.maxMMR;
     var tier = tiers.firstWhere(
-      (x) => x.minMMR <= mmr && (x.maxMMR == maxMMR || x.maxMMR >= mmr),
+      (x) => x.maxMMR >= mmr,
       orElse: () => null,
     );
 
-    print("mmr: $mmr, tier: $tier");
+    // print("mmr: $mmr, tier: $tier");
     return "$formattedDate\nRating: $mmr\n${tier?.tier} ${tier?.division}";
   }
 }
