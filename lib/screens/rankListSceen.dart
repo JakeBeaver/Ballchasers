@@ -44,8 +44,8 @@ class _RankListScreenState extends State<RankListScreen> {
               )
             ],
             title:
-                Text(prov.player?.handle ?? prov.player?.name ?? "loading..."),
-            leading: prov.player.picUrl == null
+                Text(prov.player?.handle ?? prov.player?.name ?? ""),
+            leading: prov.player?.picUrl == null
                 ? CircularProgressIndicator()
                 : GestureDetector(
                     child: ClipOval(
@@ -124,10 +124,12 @@ class _RankListScreenState extends State<RankListScreen> {
                     leading: Stack(
                       children: [
                         ClipOval(
-                          child: CachedNetworkImage(
-                              placeholder: (c, a) =>
-                                  CircularProgressIndicator(),
-                              imageUrl: prov.player.picUrl),
+                          child: prov.player?.picUrl == null
+                              ? CircularProgressIndicator()
+                              : CachedNetworkImage(
+                                  placeholder: (c, a) =>
+                                      CircularProgressIndicator(),
+                                  imageUrl: prov.player?.picUrl),
                         ),
                         Container(
                           decoration: BoxDecoration(
@@ -146,7 +148,7 @@ class _RankListScreenState extends State<RankListScreen> {
                         border: Border.all(color: Color(0xffab9745), width: 5)),
                     alignment: Alignment.center,
                     child: FittedBox(
-                                          child: Column(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[

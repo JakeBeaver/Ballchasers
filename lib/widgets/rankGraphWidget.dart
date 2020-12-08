@@ -47,7 +47,7 @@ class RankGraphWidget extends StatelessWidget {
               List<FlSpot> chartData =
                   (snapshot.data as PlaylistRank).chartData;
               List<TierData> tierDatas =
-                  (snapshot.data as PlaylistRank).topDivisionTierDatas;
+                  (snapshot.data as PlaylistRank).allTierDatas;
               var days = chartData.length;
               var daysToShow = 5;
               const double msPerDay = 86400000;
@@ -60,16 +60,20 @@ class RankGraphWidget extends StatelessWidget {
                 LineChartData(
                   lineTouchData: LineTouchData(
                     touchTooltipData: LineTouchTooltipData(
-                      tooltipBgColor: Colors.white,
+                      showOnTopOfTheChartBoxArea: true,
+                      fitInsideHorizontally: true,
+                      fitInsideVertically: true,
+                      maxContentWidth: 200,
+                      tooltipBgColor: Color(0xbb041d59),
                       tooltipRoundedRadius: 20,
                       getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
                         return lineBarsSpot.map((lineBarSpot) {
                           return LineTooltipItem(
-                            
-                            lineBarSpot.y.toInt().toString(),
+                            getTooltipTitle(tierDatas, lineBarSpot),
                             const TextStyle(
-                                color: Color(0xffe58517),
-                                fontWeight: FontWeight.bold),
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           );
                         }).toList();
                       },
@@ -83,7 +87,11 @@ class RankGraphWidget extends StatelessWidget {
                       drawHorizontalLine: true,
                       horizontalInterval: 1,
                       getDrawingHorizontalLine: (val) => FlLine(
-                          strokeWidth: 1,
+                          strokeWidth:
+                              getTier(tierDatas, val.toInt())?.division ==
+                                      "Division I"
+                                  ? 1
+                                  : 0.25,
                           color: getSplitColor(tierDatas, val.toInt()))),
                   minY: minDataPoint * .8,
                   maxY: maxDataPoint > tierDatas.last.minMMR
@@ -96,8 +104,9 @@ class RankGraphWidget extends StatelessWidget {
                       reservedSize: 60,
                       margin: 10,
                       interval: 1,
-                      getTitles: (value) =>
-                          getSplitName(tierDatas, value.toInt()),
+                      getTitles: (value) => getSplitName(
+                          tierDatas, value.toInt(),
+                          onlyFirstDivision: true),
                       getTextStyles: (value) => TextStyle(
                         color: getSplitColor(tierDatas, value.toInt()),
                         fontSize: 10,
@@ -135,7 +144,7 @@ class RankGraphWidget extends StatelessWidget {
         spots: data,
         colors: const [const Color(0xffe58517)],
         isCurved: true,
-        dotData: FlDotData(show: false),
+        dotData: FlDotData(show: data.length < 30),
       );
 
   Color getSplitColor(List<TierData> tiers, int value) {
@@ -162,9 +171,45 @@ class RankGraphWidget extends StatelessWidget {
     return Colors.transparent;
   }
 
-  String getSplitName(List<TierData> tiers, int value) {
-    return tiers
-        .firstWhere((element) => element.minMMR == value, orElse: () => null)
-        ?.tier;
+  String getSplitName(
+    List<TierData> tiers,
+    int value, {
+    bool onlyFirstDivision = false,
+  }) {
+    var tier = getTier(tiers, value, onlyFirstDivision: onlyFirstDivision);
+    return tier?.tier;
+  }
+
+  TierData getTier(
+    List<TierData> tiers,
+    int value, {
+    bool onlyFirstDivision = false,
+  }) {
+    var tier = tiers.firstWhere(
+      (x) =>
+          x.minMMR == value &&
+          (!onlyFirstDivision || x.division == "Division I"),
+      orElse: () => null,
+    );
+    return tier;
+  }
+
+  String getTooltipTitle(
+    List<TierData> tiers,
+    LineBarSpot lineBarSpot,
+  ) {
+    var mmr = lineBarSpot.y.toInt();
+    var date = DateTime.fromMillisecondsSinceEpoch(lineBarSpot.x.toInt());
+
+    final tf = DateFormat("dd/MM/yyyy");
+    var formattedDate = tf.format(date);
+    var maxMMR = tiers.last.maxMMR;
+    var tier = tiers.firstWhere(
+      (x) => x.minMMR <= mmr && (x.maxMMR == maxMMR || x.maxMMR >= mmr),
+      orElse: () => null,
+    );
+
+    print("mmr: $mmr, tier: $tier");
+    return "$formattedDate\nRating: $mmr\n${tier?.tier} ${tier?.division}";
   }
 }

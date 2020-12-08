@@ -27,9 +27,9 @@ class PlayersData with ChangeNotifier {
   }
 
   Player get lastUsedPlayer {
+    if (data.isEmpty) return null;
     var d = data;
-    if (d.length > 1)
-      d.sort((x, y) => y.lastUse.compareTo(x.lastUse));
+    if (d.length > 1) d.sort((x, y) => y.lastUse.compareTo(x.lastUse));
     return d.first;
   }
 
@@ -43,7 +43,7 @@ class PlayersData with ChangeNotifier {
     notifyListeners();
   }
 
- Future removePlayer(Player player) async {
+  Future removePlayer(Player player) async {
     _deletePlayer(player);
     await _saveData();
     notifyListeners();
@@ -63,7 +63,7 @@ class PlayersData with ChangeNotifier {
   Future _loadData() async {
     final file = await _localFile;
 
-    if (! await file.exists()){
+    if (!await file.exists()) {
       return;
     }
     // Read the file.
@@ -86,7 +86,6 @@ class Player {
 
   Map<String, dynamic> statsBody;
   Map<String, dynamic> sessionsBody;
-  
 
   Player({
     @required this.platform,
@@ -97,10 +96,13 @@ class Player {
   }) {
     _lastUse = lastUse ?? DateTime.now();
   }
-  
+
   String get nameForSearch {
-    if (name.toLowerCase().contains("steamcommunity.com/profiles/")){
-      return name.toLowerCase().split("steamcommunity.com/profiles/")[1].split("/")[0];
+    if (name.toLowerCase().contains("steamcommunity.com/profiles/")) {
+      return name
+          .toLowerCase()
+          .split("steamcommunity.com/profiles/")[1]
+          .split("/")[0];
     }
     return name;
   }
@@ -111,8 +113,8 @@ class Player {
         "picUrl": picUrl,
         "platform": platform.toString(),
         "lastUse": _lastUse.millisecondsSinceEpoch,
-        "statsBody" : json.encode(statsBody),
-        "sessionsBody" : json.encode(sessionsBody),
+        "statsBody": json.encode(statsBody),
+        "sessionsBody": json.encode(sessionsBody),
       };
 
   Player.fromJson(Map<String, dynamic> map)

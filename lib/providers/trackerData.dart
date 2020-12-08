@@ -42,6 +42,7 @@ class TrackerData with ChangeNotifier {
     if (player == null) {
       player = prov.lastUsedPlayer;
     }
+    if (player == null) return;
     _statsBody = player.statsBody;
     _sessionsBody = player.sessionsBody;
     bool failed = false;
@@ -334,16 +335,17 @@ class PlaylistRank {
     final response = await http.get(address);
     var parsedResponse = json.decode(response.body) as Map<String, dynamic>;
     var tiers = parsedResponse["data"]["tiers"] as List<dynamic>;
-    var divisions = parsedResponse["data"]["tiers"] as List<dynamic>;
+    var divisions = parsedResponse["data"]["divisions"] as List<dynamic>;
 
     var distributions = parsedResponse["data"]["data"] as List<dynamic>;
-    var newList = distributions.map(
+    var newList = distributions
+    .map(
       (x) => TierData(
         x,
         tiers,
         divisions,
       ),
-    );
+    ).where((x)=>x.tier != "Unranked" );
 
     List<TierData> newerList = [];
     for (TierData d in newList) {
@@ -360,10 +362,11 @@ class PlaylistRank {
     final response = await http.get(address);
     var parsedResponse = json.decode(response.body) as Map<String, dynamic>;
     var playlistData = parsedResponse["data"]["$playlistId"] as List<dynamic>;
+    int i = 0;
     var newData = playlistData
         .map((x) => FlSpot(
-              DateTime.parse(x["collectDate"])
-                  .millisecondsSinceEpoch
+              (DateTime.parse(x["collectDate"])
+                  .millisecondsSinceEpoch + i++)
                   .toDouble(),
               x["rating"].toDouble(),
             ))

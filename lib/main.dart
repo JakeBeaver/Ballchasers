@@ -48,8 +48,9 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<PlayersData>(context);
-    return prov.ready
-        ? prov.data.length == 0 ? AddPlayerScreen() : RankListScreen()
-        : Center(child: CircularProgressIndicator());
+    return prov.ready && prov.data.length == 0
+        ? AddPlayerScreen()
+        : RankListScreen();
+    // : Center(child: CircularProgressIndicator());
   }
 }
