@@ -320,7 +320,7 @@ class PlaylistRank {
 
   List<TierData> topDivisionTierDatas;
   List<TierData> allTierDatas;
-  List<FlSpot> chartData;
+  List<TierGraphPoint> chartData;
 
   Future<PlaylistRank> getChartData() async {
     await Future.wait([
@@ -339,18 +339,20 @@ class PlaylistRank {
 
     var distributions = parsedResponse["data"]["data"] as List<dynamic>;
     var newList = distributions
-    .map(
-      (x) => TierData(
-        x,
-        tiers,
-        divisions,
-      ),
-    ).where((x)=>x.tier != "Unranked" ).toList();
+        .map(
+          (x) => TierData(
+            x,
+            tiers,
+            divisions,
+          ),
+        )
+        .where((x) => x.tier != "Unranked")
+        .toList();
 
     List<TierData> newerList = [];
-    for (int i = 1; i < newList.length; i++){
-      newList[i].minMMR = newList[i-1].maxMMR;
-    }
+    // for (int i = 1; i < newList.length; i++){
+    //   newList[i].minMMR = newList[i-1].maxMMR;
+    // }
     for (TierData d in newList) {
       if (newerList.isEmpty || newerList.last.tier != d.tier) {
         newerList.add(d);
@@ -365,16 +367,30 @@ class PlaylistRank {
     final response = await http.get(address);
     var parsedResponse = json.decode(response.body) as Map<String, dynamic>;
     var playlistData = parsedResponse["data"]["$playlistId"] as List<dynamic>;
-    int i = 0;
-    var newData = playlistData
-        .map((x) => FlSpot(
-              (DateTime.parse(x["collectDate"])
-                  .millisecondsSinceEpoch + i++)
-                  .toDouble(),
-              x["rating"].toDouble(),
-            ))
-        .toList();
+    var newData = playlistData.map((x) => TierGraphPoint(x)).toList();
     chartData = newData;
+  }
+}
+
+class TierGraphPoint {
+  FlSpot spot;
+  String division;
+  String tier;
+
+  DateTime collectionDate;
+  int collectionDateMillisecondsSinceEpoch;
+  int mmr;
+
+  TierGraphPoint(x) {
+    collectionDate = DateTime.parse(x["collectDate"]);
+    mmr = x["rating"];
+    collectionDateMillisecondsSinceEpoch = collectionDate.millisecondsSinceEpoch;
+    spot = FlSpot(
+      collectionDateMillisecondsSinceEpoch.toDouble(),
+      mmr.toDouble(),
+    );
+    tier = x["tier"].replaceAll("Champion", "Champ");
+    division = x["division"];
   }
 }
 
@@ -383,6 +399,13 @@ class TierData {
   int maxMMR;
   String tier;
   String division;
+
+  TierData.copyFrom(TierData tierData, {String tier, String division}){
+    minMMR = tierData.minMMR;
+    maxMMR = tierData.maxMMR;
+    this.tier = tier ?? tierData.tier;
+    this.division = division ?? tierData.division;
+  }
   TierData(
     Map<String, dynamic> x,
     List<dynamic> tiers,
