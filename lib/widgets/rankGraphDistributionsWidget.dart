@@ -49,12 +49,14 @@ class RankGraphDistributions extends StatelessWidget {
       int tierNumber = c.name.endsWith('I') ? c.name.split(' ').last.length : 0;
       ordered[getTierOrdinalFromName(c.name) * 10 - (2 - tierNumber)] = c;
     }
+    var mq = MediaQuery.of(context);
     return total == unrankedCount
         ? Container()
         : Column(
             children: [
               SizedBox(height: 20),
-              whiteTitle("Tier distribution this season based on $total tracked players:",
+              whiteTitle(
+                  "Tier distribution this season based on $total tracked players:",
                   textAlign: TextAlign.center),
               SizedBox(height: 20),
               AspectRatio(
@@ -63,26 +65,10 @@ class RankGraphDistributions extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: BarChart(
                     BarChartData(
-                      gridData: FlGridData(
-                        show: true,
-                        checkToShowHorizontalLine: (value) => value % 5 == 0,
-                        getDrawingHorizontalLine: (value) {
-                          if (value == 0) {
-                            return FlLine(
-                                color: const Color(0xff363753), strokeWidth: 3);
-                          }
-                          return FlLine(
-                            color: const Color(0xff2a2747),
-                            strokeWidth: 0.8,
-                          );
-                        },
-                      ),
-                      borderData: FlBorderData(
-                        show: false,
-                      ),
+                      borderData: FlBorderData(show: false),
                       barGroups: ordered.keys
                           .map(
-                            (index) => getBarFromTier(index, ordered[index]),
+                            (index) => getBarFromTier(index, ordered[index], mq),
                           )
                           .toList(),
                       titlesData: FlTitlesData(
@@ -143,7 +129,7 @@ class RankGraphDistributions extends StatelessWidget {
           );
   }
 
-  BarChartGroupData getBarFromTier(int index, TierCount tier) {
+  BarChartGroupData getBarFromTier(int index, TierCount tier, MediaQueryData mq) {
     double y = (tier.count ?? 0).toDouble();
     return BarChartGroupData(
       x: index,
@@ -151,7 +137,7 @@ class RankGraphDistributions extends StatelessWidget {
       barRods: [
         BarChartRodData(
           y: y,
-          width: 10,
+          width: (mq.size.width-120)/22,
           colors: [addOpacity(getTierColorByName(tier.name), 0.9)],
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(6),
