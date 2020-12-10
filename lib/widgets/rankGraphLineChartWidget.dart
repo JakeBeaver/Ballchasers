@@ -52,7 +52,7 @@ class RankGraphLineChart extends StatelessWidget {
                   ))
               .toList(),
           touchTooltipData: LineTouchTooltipData(
-            showOnTopOfTheChartBoxArea: true,
+            // showOnTopOfTheChartBoxArea: true,
             fitInsideHorizontally: true,
             fitInsideVertically: true,
             maxContentWidth: 200,

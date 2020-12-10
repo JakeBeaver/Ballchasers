@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
-Widget whiteTitle(String text, {double sizeAdjust = 0}) {
+Widget whiteTitle(
+  String text, {
+  double sizeAdjust = 0,
+  TextAlign textAlign = TextAlign.start,
+}) {
   return Text(
     text,
+    textAlign: textAlign,
     style: TextStyle(
       fontSize: 18 + sizeAdjust,
       fontWeight: FontWeight.bold,
@@ -10,9 +15,14 @@ Widget whiteTitle(String text, {double sizeAdjust = 0}) {
   );
 }
 
-Widget goldTitle(String text, {double sizeAdjust = 0}) {
+Widget goldTitle(
+  String text, {
+  double sizeAdjust = 0,
+  TextAlign textAlign = TextAlign.start,
+}) {
   return Text(
     text,
+    textAlign: textAlign,
     style: TextStyle(
       fontSize: 18 + sizeAdjust,
       fontWeight: FontWeight.bold,
@@ -62,7 +72,7 @@ Widget lossStreakTitle(String text, {double sizeAdjust = 0}) {
 Widget winStreakTitle(String text, {double sizeAdjust = 0}) {
   return Row(
     children: [
-      Icon(Icons.whatshot, color: Color(0xffe68617), size:20),
+      Icon(Icons.whatshot, color: Color(0xffe68617), size: 20),
       Text(
         text,
         style: TextStyle(

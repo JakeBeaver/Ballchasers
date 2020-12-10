@@ -1,6 +1,7 @@
 import 'package:RLRank/methods/graphMethods.dart';
 import 'package:RLRank/providers/trackerData.dart';
 import 'package:RLRank/widgets/rankGraphLineChartWidget.dart';
+import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -50,85 +51,95 @@ class RankGraphDistributions extends StatelessWidget {
     }
     return total == unrankedCount
         ? Container()
-        : AspectRatio(
-            aspectRatio: 3,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: BarChart(
-                BarChartData(
-                  gridData: FlGridData(
-                    show: true,
-                    checkToShowHorizontalLine: (value) => value % 5 == 0,
-                    getDrawingHorizontalLine: (value) {
-                      if (value == 0) {
-                        return FlLine(
-                            color: const Color(0xff363753), strokeWidth: 3);
-                      }
-                      return FlLine(
-                        color: const Color(0xff2a2747),
-                        strokeWidth: 0.8,
-                      );
-                    },
-                  ),
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
-                  barGroups: ordered.keys
-                      .map(
-                        (index) => getBarFromTier(index, ordered[index]),
-                      )
-                      .toList(),
-                  titlesData: FlTitlesData(
-                    leftTitles: SideTitles(),
-                    bottomTitles: SideTitles(
-                      showTitles: true,
-                      getTextStyles: (value) => TextStyle(
-                        fontSize: 10,
-                        color: getTierColorByName(ordered[value].name),
+        : Column(
+            children: [
+              SizedBox(height: 20),
+              whiteTitle("Tier distribution this season based on $total tracked players:",
+                  textAlign: TextAlign.center),
+              SizedBox(height: 20),
+              AspectRatio(
+                aspectRatio: 3,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: BarChart(
+                    BarChartData(
+                      gridData: FlGridData(
+                        show: true,
+                        checkToShowHorizontalLine: (value) => value % 5 == 0,
+                        getDrawingHorizontalLine: (value) {
+                          if (value == 0) {
+                            return FlLine(
+                                color: const Color(0xff363753), strokeWidth: 3);
+                          }
+                          return FlLine(
+                            color: const Color(0xff2a2747),
+                            strokeWidth: 0.8,
+                          );
+                        },
                       ),
-                      getTitles: (value) {
-                        var name = ordered[value].name;
-                        if (name.endsWith(" II"))
-                          return name
-                              .split(" ")
-                              .where((x) => !x.endsWith("I"))
-                              .join(" ");
-                        if (!name.endsWith("I")) return name;
-                        return "";
-                      },
-                      rotateAngle: 20,
-                      reservedSize: 30,
-                      margin: 12,
-                    ),
-                  ),
-                  barTouchData: BarTouchData(
-                    touchTooltipData: BarTouchTooltipData(
-                      // showOnTopOfTheChartBoxArea: true,
-                      // fitInsideHorizontally: true,
-                      // fitInsideVertically: true,
-                      maxContentWidth: 200,
-                      tooltipBgColor: Color(0xbb041d59),
-                      tooltipRoundedRadius: 20,
-                      getTooltipItem: (
-                        BarChartGroupData group,
-                        int groupIndex,
-                        BarChartRodData rod,
-                        int rodIndex,
-                      ) {
-                        return BarTooltipItem(
-                          "${rod.y.round()} (${(rod.y / total * 100 * 1000).round() / 1000}%)",
-                          // rod.y.round().toString(),
-                          const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      barGroups: ordered.keys
+                          .map(
+                            (index) => getBarFromTier(index, ordered[index]),
+                          )
+                          .toList(),
+                      titlesData: FlTitlesData(
+                        leftTitles: SideTitles(),
+                        bottomTitles: SideTitles(
+                          showTitles: true,
+                          getTextStyles: (value) => TextStyle(
+                            fontSize: 10,
+                            color: getTierColorByName(ordered[value].name),
                           ),
-                        );
-                      },
+                          getTitles: (value) {
+                            var name = ordered[value].name;
+                            if (name.endsWith(" II"))
+                              return name
+                                  .split(" ")
+                                  .where((x) => !x.endsWith("I"))
+                                  .join(" ");
+                            if (!name.endsWith("I")) return name;
+                            return "";
+                          },
+                          rotateAngle: 20,
+                          reservedSize: 30,
+                          margin: 12,
+                        ),
+                      ),
+                      barTouchData: BarTouchData(
+                        touchTooltipData: BarTouchTooltipData(
+                          // showOnTopOfTheChartBoxArea: true,
+                          fitInsideHorizontally: true,
+                          // fitInsideVertically: true,
+                          maxContentWidth: 200,
+                          tooltipBgColor: Color(0xbb041d59),
+                          tooltipRoundedRadius: 20,
+                          getTooltipItem: (
+                            BarChartGroupData group,
+                            int groupIndex,
+                            BarChartRodData rod,
+                            int rodIndex,
+                          ) {
+                            return BarTooltipItem(
+                              "${ordered[group.x].name}" +
+                                  "\n${rod.y.round()} / ${total}" +
+                                  "\n${(rod.y / total * 100 * 1000).round() / 1000}%",
+                              // rod.y.round().toString(),
+                              const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
+            ],
           );
   }
 
