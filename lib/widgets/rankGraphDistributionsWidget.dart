@@ -26,89 +26,110 @@ class RankGraphDistributions extends StatelessWidget {
         aggregated[index] = TierCount(aggName, c.count + existing.count);
       }
     }
-    
+
     aggregated.sort(
       (a, b) => getTierOrdinalFromName(a.name) - getTierOrdinalFromName(b.name),
     );
+    tierDistributions.sort(
+      (a, b) =>
+          ((getTierOrdinalFromName(a.name) * 1000) + a.name.length) -
+          ((getTierOrdinalFromName(b.name) * 1000) + b.name.length),
+    );
 
     int total = 0;
-
+    int unrankedCount = 0;
     Map<int, TierCount> ordered = {};
-    for (var c in aggregated) {
+    for (var c in tierDistributions) {
       total += c.count;
-      if (c.name == 'Unranked') continue;
-      ordered[getTierOrdinalFromName(c.name)] = c;
+      if (c.name == 'Unranked') {
+        unrankedCount = c.count;
+        continue;
+      }
+      int tierNumber = c.name.endsWith('I') ? c.name.split(' ').last.length : 0;
+      ordered[getTierOrdinalFromName(c.name) * 10 - (2 - tierNumber)] = c;
     }
-    return AspectRatio(
-      aspectRatio: 3,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: BarChart(
-          BarChartData(
-            gridData: FlGridData(
-              show: true,
-              checkToShowHorizontalLine: (value) => value % 5 == 0,
-              getDrawingHorizontalLine: (value) {
-                if (value == 0) {
-                  return FlLine(color: const Color(0xff363753), strokeWidth: 3);
-                }
-                return FlLine(
-                  color: const Color(0xff2a2747),
-                  strokeWidth: 0.8,
-                );
-              },
-            ),
-            borderData: FlBorderData(
-              show: false,
-            ),
-            barGroups: ordered.keys
-                .map(
-                  (index) => getBarFromTier(index, ordered[index]),
-                )
-                .toList(),
-            titlesData: FlTitlesData(
-              leftTitles: SideTitles(),
-              bottomTitles: SideTitles(
-                showTitles: true,
-                getTextStyles: (value) => TextStyle(
-                  fontSize: 10,
-                  color: getTierColorByName(ordered[value].name),
-                ),
-                getTitles: (value) => ordered[value].name,
-                rotateAngle: 20,
-                reservedSize: 30,
-                margin: 12,
-              ),
-            ),
-            barTouchData: BarTouchData(
-              touchTooltipData: BarTouchTooltipData(
-                // showOnTopOfTheChartBoxArea: true,
-                // fitInsideHorizontally: true,
-                // fitInsideVertically: true,
-                maxContentWidth: 200,
-                tooltipBgColor: Color(0xbb041d59),
-                tooltipRoundedRadius: 20,
-                getTooltipItem: (
-                  BarChartGroupData group,
-                  int groupIndex,
-                  BarChartRodData rod,
-                  int rodIndex,
-                ) {
-                  return BarTooltipItem(
-                    "${rod.y.round()} (${(rod.y/total*100 * 1000).round()/1000}%)",
-                    // rod.y.round().toString(),
-                    const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+    return total == unrankedCount
+        ? Container()
+        : AspectRatio(
+            aspectRatio: 3,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: BarChart(
+                BarChartData(
+                  gridData: FlGridData(
+                    show: true,
+                    checkToShowHorizontalLine: (value) => value % 5 == 0,
+                    getDrawingHorizontalLine: (value) {
+                      if (value == 0) {
+                        return FlLine(
+                            color: const Color(0xff363753), strokeWidth: 3);
+                      }
+                      return FlLine(
+                        color: const Color(0xff2a2747),
+                        strokeWidth: 0.8,
+                      );
+                    },
+                  ),
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                  barGroups: ordered.keys
+                      .map(
+                        (index) => getBarFromTier(index, ordered[index]),
+                      )
+                      .toList(),
+                  titlesData: FlTitlesData(
+                    leftTitles: SideTitles(),
+                    bottomTitles: SideTitles(
+                      showTitles: true,
+                      getTextStyles: (value) => TextStyle(
+                        fontSize: 10,
+                        color: getTierColorByName(ordered[value].name),
+                      ),
+                      getTitles: (value) {
+                        var name = ordered[value].name;
+                        if (name.endsWith(" II"))
+                          return name
+                              .split(" ")
+                              .where((x) => !x.endsWith("I"))
+                              .join(" ");
+                        if (!name.endsWith("I")) return name;
+                        return "";
+                      },
+                      rotateAngle: 20,
+                      reservedSize: 30,
+                      margin: 12,
                     ),
-                  );
-                },
+                  ),
+                  barTouchData: BarTouchData(
+                    touchTooltipData: BarTouchTooltipData(
+                      // showOnTopOfTheChartBoxArea: true,
+                      // fitInsideHorizontally: true,
+                      // fitInsideVertically: true,
+                      maxContentWidth: 200,
+                      tooltipBgColor: Color(0xbb041d59),
+                      tooltipRoundedRadius: 20,
+                      getTooltipItem: (
+                        BarChartGroupData group,
+                        int groupIndex,
+                        BarChartRodData rod,
+                        int rodIndex,
+                      ) {
+                        return BarTooltipItem(
+                          "${rod.y.round()} (${(rod.y / total * 100 * 1000).round() / 1000}%)",
+                          // rod.y.round().toString(),
+                          const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
   }
 
   BarChartGroupData getBarFromTier(int index, TierCount tier) {
@@ -119,7 +140,7 @@ class RankGraphDistributions extends StatelessWidget {
       barRods: [
         BarChartRodData(
           y: y,
-          width: 20,
+          width: 10,
           colors: [addOpacity(getTierColorByName(tier.name), 0.9)],
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(6),

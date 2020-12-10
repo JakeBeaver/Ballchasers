@@ -383,9 +383,9 @@ class PlaylistRank {
       tierDistributions.add(TierCount(tierName, bar.count));
     }
     for (var tier in tiers){
-      name = tier.replaceAll("Champion", "Champ");
-      if (!tierDistributions.any((element) => element.name == name)){
-        tierDistributions.add(TierCount(name, 0));
+      var tierName = tier.replaceAll("Champion", "Champ");
+      if (!tierDistributions.any((element) => element.name == tierName)){
+        tierDistributions.add(TierCount(tierName, 0));
       }
     }
 

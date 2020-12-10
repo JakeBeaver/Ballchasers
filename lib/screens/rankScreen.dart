@@ -96,15 +96,14 @@ class RankScreen extends StatelessWidget {
     var iconGraphStack = RankGraphWidget(
       rank,
       isPortrait: isPortraitList,
-      getLineChart: (chartData, tierDatas) => Stack(
-        fit: StackFit.passthrough,
-        alignment: Alignment.center,
-        children: [
-          icon,
-          RankGraphLineChart(chartData, tierDatas),
-        ],
-      ),
-      getDistributionChart: (tierDistributions) => RankGraphDistributions(tierDistributions),
+      icon: icon,
+      // chartData: chartData,
+      // tierDatas: tierDatas,
+      // tierDistributions : tierDistributons,
+      // getLineChart: (chartData, tierDatas) =>
+      //     RankGraphLineChart(chartData, tierDatas),
+      // getDistributionChart: (tierDistributions) =>
+      //     RankGraphDistributions(tierDistributions),
     );
 
     return Scaffold(
