@@ -379,7 +379,7 @@ class PlaylistRank {
 
     tierDistributions = [];
     for (var bar in trackedPlayersInThisPlaylist) {
-      tierName = tiers[bar.tierId].replaceAll("Champion", "Champ");
+      var tierName = tiers[bar.tierId].replaceAll("Champion", "Champ");
       tierDistributions.add(TierCount(tierName, bar.count));
     }
     for (var tier in tiers){

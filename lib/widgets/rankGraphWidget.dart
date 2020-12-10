@@ -72,7 +72,7 @@ class RankGraphWidget extends StatelessWidget {
                         bgIconStack(
                           child: RankGraphLineChart(chartData, tierDatas),
                         ),
-                        RankGraphDistributions(rank.tierDistributions),
+                        RankGraphDistributions(rank.tierDistributions, rank.tierName),
                       ],
                     )
                   : bgIconStack(

@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 
 class RankGraphDistributions extends StatelessWidget {
   final List<TierCount> tierDistributions;
-  RankGraphDistributions(this.tierDistributions);
+  final String currentTier;
+  RankGraphDistributions(this.tierDistributions, this.currentTier);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +57,7 @@ class RankGraphDistributions extends StatelessWidget {
             children: [
               SizedBox(height: 20),
               whiteTitle(
-                  "Tier distribution this season based on $total tracked players:",
+                  "Distribution of $total players tracked this season:",
                   textAlign: TextAlign.center),
               SizedBox(height: 20),
               AspectRatio(
@@ -68,7 +69,8 @@ class RankGraphDistributions extends StatelessWidget {
                       borderData: FlBorderData(show: false),
                       barGroups: ordered.keys
                           .map(
-                            (index) => getBarFromTier(index, ordered[index], mq),
+                            (index) => getBarFromTier(
+                                index, ordered[index], mq, currentTier),
                           )
                           .toList(),
                       titlesData: FlTitlesData(
@@ -110,7 +112,7 @@ class RankGraphDistributions extends StatelessWidget {
                           ) {
                             return BarTooltipItem(
                               "${ordered[group.x].name}" +
-                                  "\n${rod.y.round()} / ${total}" +
+                                  "\n${rod.y.round()} / $total" +
                                   "\n${(rod.y / total * 100 * 1000).round() / 1000}%",
                               // rod.y.round().toString(),
                               const TextStyle(
@@ -129,16 +131,24 @@ class RankGraphDistributions extends StatelessWidget {
           );
   }
 
-  BarChartGroupData getBarFromTier(int index, TierCount tier, MediaQueryData mq) {
+  BarChartGroupData getBarFromTier(
+    int index,
+    TierCount tier,
+    MediaQueryData mq,
+    String currentTier,
+  ) {
     double y = (tier.count ?? 0).toDouble();
+    bool isCurrent = tier.name == currentTier;
     return BarChartGroupData(
       x: index,
       barsSpace: 0,
       barRods: [
         BarChartRodData(
           y: y,
-          width: (mq.size.width-120)/22,
-          colors: [addOpacity(getTierColorByName(tier.name), 0.9)],
+          width: (mq.size.width - 120) / 22,
+          colors: [
+            addOpacity(getTierColorByName(tier.name), isCurrent ? 1 : 0.5)
+          ],
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(6),
             topRight: Radius.circular(6),
