@@ -1,4 +1,6 @@
 import 'package:RLRank/providers/trackerData.dart';
+import 'package:RLRank/widgets/rankGraphDistributionsWidget.dart';
+import 'package:RLRank/widgets/rankGraphLineChartWidget.dart';
 import 'package:RLRank/widgets/rankGraphWidget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -91,10 +93,18 @@ class RankScreen extends StatelessWidget {
 
     bool isPortraitList = mq.size.aspectRatio < 1.5;
 
-    var iconGraphStack = Stack(
-      fit: StackFit.passthrough,
-      alignment: Alignment.center,
-      children: [icon, RankGraphWidget(rank)],
+    var iconGraphStack = RankGraphWidget(
+      rank,
+      isPortrait: isPortraitList,
+      getLineChart: (chartData, tierDatas) => Stack(
+        fit: StackFit.passthrough,
+        alignment: Alignment.center,
+        children: [
+          icon,
+          RankGraphLineChart(chartData, tierDatas),
+        ],
+      ),
+      getDistributionChart: (tierDistributions) => RankGraphDistributions(tierDistributions),
     );
 
     return Scaffold(

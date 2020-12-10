@@ -354,6 +354,7 @@ class PlaylistRank {
 
   List<TierData> topDivisionTierDatas;
   List<TierData> allTierDatas;
+  List<TierCount> tierDistributions = [];
   List<TierGraphPoint> chartData;
   Future<PlaylistRank> getChartData() async {
     await Future.wait([
@@ -376,13 +377,25 @@ class PlaylistRank {
         .where((x) => x.playlistId == playlistId)
         .toList();
 
+    tierDistributions = [];
+    for (var bar in trackedPlayersInThisPlaylist) {
+      tierName = tiers[bar.tierId].replaceAll("Champion", "Champ");
+      tierDistributions.add(TierCount(tierName, bar.count));
+    }
+    for (var tier in tiers){
+      name = tier.replaceAll("Champion", "Champ");
+      if (!tierDistributions.any((element) => element.name == name)){
+        tierDistributions.add(TierCount(name, 0));
+      }
+    }
+
+    // tierDistributions.removeWhere((element) => element.name == "Unranked");
     var newList = distributions
         .map(
           (x) => TierData(
             x,
             tiers,
             divisions,
-            trackedPlayersInThisPlaylist,
           ),
         )
         .toList();
@@ -421,6 +434,12 @@ class TrackedPlayersRaw {
     tierId = x["tier"];
     count = x["count"];
   }
+}
+
+class TierCount {
+  final String name;
+  final int count;
+  TierCount(this.name, this.count);
 }
 
 class TierGraphPoint {
@@ -468,15 +487,15 @@ class TierData {
     Map<String, dynamic> x,
     List<dynamic> tiers,
     List<dynamic> divisions,
-    List<TrackedPlayersRaw> distributions,
+    // List<TrackedPlayersRaw> distributions,
   ) {
     minMMR = x["minMMR"];
     maxMMR = x["maxMMR"];
     int tierId = x["tier"];
     tier = tiers[tierId].replaceAll("Champion", "Champ");
     division = divisions[x["division"]];
-    distributions.firstWhere((x) => x.tierId == tierId);
-
+    // countThisSeason = distributions.firstWhere((x) => x.tierId == tierId).count;
+    // print("$tier: $countThisSeason");
     // String picUrlPre20 =
     //     "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-$tierId.png";
     // String picUrl20AndOn =
