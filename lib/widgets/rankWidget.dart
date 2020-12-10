@@ -37,15 +37,17 @@ class RankWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 whiteTitle("" + rank.mmr.toString()),
-                // Container(),
-                Text(" • " + rank.tierName + " " + rank.divisionName),
-                // Container(),
+                if (rank.tierName != "Unranked" || rank.tierName == "Supersonic Legend")
+                  Text(" • " + rank.tierName + " " + rank.divisionName)
+                else
+                  Text(" • " + rank.tierName),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text("${rank.matchesPlayed} games  "),
+                if (rank.matchesPlayed != 0)
+                  Text("${rank.matchesPlayed} games  "),
                 if (rank.winStreak > 0)
                   winStreakTitle("Win strk: ${rank.winStreak}"),
                 if (rank.lossStreak > 0)

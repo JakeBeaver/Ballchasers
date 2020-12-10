@@ -82,8 +82,10 @@ class Player {
   final String picUrl;
   final Platform platform;
   DateTime _lastUse;
+
   DateTime get lastUse => _lastUse;
 
+  Map<String, dynamic> distributionsBody;
   Map<String, dynamic> statsBody;
   Map<String, dynamic> sessionsBody;
 
@@ -115,6 +117,7 @@ class Player {
         "lastUse": _lastUse.millisecondsSinceEpoch,
         "statsBody": json.encode(statsBody),
         "sessionsBody": json.encode(sessionsBody),
+        "distributionsBody": json.encode(distributionsBody),
       };
 
   Player.fromJson(Map<String, dynamic> map)
@@ -124,7 +127,8 @@ class Player {
         platform = Player.getPlatformFromString(map["platform"]),
         _lastUse = DateTime.fromMillisecondsSinceEpoch(map["lastUse"]),
         statsBody = json.decode(map["statsBody"] ?? "{}"),
-        sessionsBody = json.decode(map["sessionsBody"] ?? "{}");
+        sessionsBody = json.decode(map["sessionsBody"] ?? "{}"),
+        distributionsBody = json.decode(map["distributionsBody"] ?? "{}");
 
   static Platform getPlatformFromString(String platformString) {
     for (Platform element in Platform.values) {

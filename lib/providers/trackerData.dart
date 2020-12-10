@@ -1,5 +1,8 @@
+import 'dart:async';
+// import 'dart:ui' as ui;
 import 'dart:convert';
 
+// import 'package:RLRank/providers/getUiImage.dart';
 import 'package:RLRank/providers/playersData.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
@@ -45,11 +48,13 @@ class TrackerData with ChangeNotifier {
     if (player == null) return;
     _statsBody = player.statsBody;
     _sessionsBody = player.sessionsBody;
+    _distributionsBody = player.distributionsBody;
     bool failed = false;
     try {
       await Future.wait([
         fetchStats(),
         fetchSessions(),
+        fetchDistributions(),
       ]);
       offline = false;
     } catch (e) {
@@ -66,6 +71,7 @@ class TrackerData with ChangeNotifier {
     notifyListeners();
     player.statsBody = _statsBody;
     player.sessionsBody = _sessionsBody;
+    player.distributionsBody = _distributionsBody;
     if (failed) {
       throw new Exception();
     }
@@ -101,9 +107,31 @@ class TrackerData with ChangeNotifier {
         "/sessions";
   }
 
+  String getDistributionsAddress() =>
+      "https://api.tracker.gg/api/v1/rocket-league/tracked-players";
+
+  Future fetchDistributions() async {
+    try {
+      String address = getDistributionsAddress();
+      final response = await http.get(address);
+      var tempDistributionsBody =
+          json.decode(response.body) as Map<String, dynamic>;
+      if (tempDistributionsBody["data"] != null) {
+        _distributionsBody = tempDistributionsBody;
+      } else {
+        throw new Exception();
+      }
+    } finally {
+      var items = _distributionsBody["data"]["tierStats"] as List<dynamic>;
+      rawTrackedPlayers = items.map((x) => TrackedPlayersRaw(x)).toList();
+    }
+  }
+
+  List<TrackedPlayersRaw> rawTrackedPlayers;
+
   Map<String, dynamic> _statsBody;
   Map<String, dynamic> _sessionsBody;
-  // Map<String, dynamic> _distributionBody;
+  Map<String, dynamic> _distributionsBody;
   // String avatarUrl() => isLoading ? null :
   List<PlaylistRank> playlistRanks;
 
@@ -121,7 +149,8 @@ class TrackerData with ChangeNotifier {
       var playerId = _statsBody["data"]["metadata"]["playerId"];
       var segments = _statsBody["data"]["segments"] as List<dynamic>;
       playlistRanks = segments
-          .map<PlaylistRank>((e) => PlaylistRank(e, playerId: playerId))
+          .map<PlaylistRank>(
+              (e) => PlaylistRank(e, playerId: playerId, trackerDataRef: this))
           .where((x) => x.display)
           .toList();
 
@@ -261,6 +290,8 @@ class Match {
 
 class PlaylistRank {
   final int playerId;
+
+  TrackerData _trackerDataRef;
   String _getMMRAddress() {
     return "https://api.tracker.gg/api/v1/rocket-league/player-history/mmr/$playerId/";
   }
@@ -282,18 +313,21 @@ class PlaylistRank {
   int matchesPlayed;
   int winStreak = 0;
   int lossStreak = 0;
-  PlaylistRank(Map<String, dynamic> map, {this.playerId}) {
+  PlaylistRank(Map<String, dynamic> map,
+      {this.playerId, TrackerData trackerDataRef}) {
     type = map["type"];
     if (type != "playlist") {
       display = false;
       return;
     }
 
+    this._trackerDataRef = trackerDataRef;
+
     matchesPlayed = map["stats"]["matchesPlayed"]["value"];
-    if (matchesPlayed == 0) {
-      display = false;
-      return;
-    }
+    // if (matchesPlayed == 0) {
+    //   display = false;
+    //   return;
+    // }
 
     playlistId = map["attributes"]["playlistId"];
 
@@ -321,12 +355,12 @@ class PlaylistRank {
   List<TierData> topDivisionTierDatas;
   List<TierData> allTierDatas;
   List<TierGraphPoint> chartData;
-
   Future<PlaylistRank> getChartData() async {
     await Future.wait([
       if (topDivisionTierDatas == null) _getDistributions(),
       if (chartData == null) _getChartData(),
     ]);
+
     return this;
   }
 
@@ -338,26 +372,31 @@ class PlaylistRank {
     var divisions = parsedResponse["data"]["divisions"] as List<dynamic>;
 
     var distributions = parsedResponse["data"]["data"] as List<dynamic>;
+    var trackedPlayersInThisPlaylist = _trackerDataRef.rawTrackedPlayers
+        .where((x) => x.playlistId == playlistId)
+        .toList();
+
     var newList = distributions
         .map(
           (x) => TierData(
             x,
             tiers,
             divisions,
+            trackedPlayersInThisPlaylist,
           ),
         )
-        .where((x) => x.tier != "Unranked")
         .toList();
 
     List<TierData> newerList = [];
-    // for (int i = 1; i < newList.length; i++){
-    //   newList[i].minMMR = newList[i-1].maxMMR;
-    // }
+    // var futuresToAwait = [...newList.map((x) => x.getPicFuture)];//.toList();
+    // await Future.wait(futuresToAwait);
+
     for (TierData d in newList) {
       if (newerList.isEmpty || newerList.last.tier != d.tier) {
         newerList.add(d);
       }
     }
+
     allTierDatas = newList.toList();
     topDivisionTierDatas = newerList;
   }
@@ -369,6 +408,18 @@ class PlaylistRank {
     var playlistData = parsedResponse["data"]["$playlistId"] as List<dynamic>;
     var newData = playlistData.map((x) => TierGraphPoint(x)).toList();
     chartData = newData;
+  }
+}
+
+class TrackedPlayersRaw {
+  int playlistId;
+  int tierId;
+  int count;
+
+  TrackedPlayersRaw(x) {
+    playlistId = x["playlist"];
+    tierId = x["tier"];
+    count = x["count"];
   }
 }
 
@@ -384,7 +435,8 @@ class TierGraphPoint {
   TierGraphPoint(x) {
     collectionDate = DateTime.parse(x["collectDate"]);
     mmr = x["rating"];
-    collectionDateMillisecondsSinceEpoch = collectionDate.millisecondsSinceEpoch;
+    collectionDateMillisecondsSinceEpoch =
+        collectionDate.millisecondsSinceEpoch;
     spot = FlSpot(
       collectionDateMillisecondsSinceEpoch.toDouble(),
       mmr.toDouble(),
@@ -399,22 +451,38 @@ class TierData {
   int maxMMR;
   String tier;
   String division;
+  int countThisSeason;
 
-  TierData.copyFrom(TierData tierData, {String tier, String division}){
+  // ui.Image pic;
+  // Future<ui.Image> getPicFuture;
+
+  TierData.copyFrom(TierData tierData, {String tier, String division}) {
     minMMR = tierData.minMMR;
     maxMMR = tierData.maxMMR;
     this.tier = tier ?? tierData.tier;
     this.division = division ?? tierData.division;
+    this.countThisSeason = tierData.countThisSeason;
+    // this.pic = tierData.pic;
   }
   TierData(
     Map<String, dynamic> x,
     List<dynamic> tiers,
     List<dynamic> divisions,
+    List<TrackedPlayersRaw> distributions,
   ) {
     minMMR = x["minMMR"];
     maxMMR = x["maxMMR"];
-    tier = tiers[x["tier"]].replaceAll("Champion", "Champ");
+    int tierId = x["tier"];
+    tier = tiers[tierId].replaceAll("Champion", "Champ");
     division = divisions[x["division"]];
+    distributions.firstWhere((x) => x.tierId == tierId);
+
+    // String picUrlPre20 =
+    //     "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-$tierId.png";
+    // String picUrl20AndOn =
+    //     "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s15rank$tierId.png";
+    // getPicFuture = getImage(tierId < 20 ? picUrlPre20 : picUrl20AndOn)
+    //     .then((r) => pic = r);
   }
 }
 

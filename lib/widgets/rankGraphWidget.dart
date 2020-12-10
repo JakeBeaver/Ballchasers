@@ -1,5 +1,5 @@
 import 'dart:math';
-
+// import 'dart:ui' as ui;
 import 'package:RLRank/providers/trackerData.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +48,8 @@ class RankGraphWidget extends StatelessWidget {
                   (snapshot.data as PlaylistRank).chartData;
               List<TierData> tierDatas =
                   (snapshot.data as PlaylistRank).allTierDatas;
+
+              if (chartData.isEmpty) return Text("nope");
               var days = chartData.length;
               var daysToShow = 5;
               const double msPerDay = 86400000;
@@ -56,7 +58,9 @@ class RankGraphWidget extends StatelessWidget {
               var maxDataPoint = ys.reduce(max);
               var interval = msPerDay * ((days / daysToShow).floor());
               double minY = minDataPoint * .8;
-              double maxY = maxDataPoint > tierDatas.last.minMMR
+
+              double maxY = tierDatas.isEmpty ||
+                      maxDataPoint > tierDatas.last.minMMR
                   ? maxDataPoint
                   : min(maxDataPoint * 1.2, tierDatas.last.minMMR.toDouble());
               if (interval == 0) interval = msPerDay;
@@ -79,6 +83,13 @@ class RankGraphWidget extends StatelessWidget {
               return LineChart(
                 LineChartData(
                   lineTouchData: LineTouchData(
+                    getTouchedSpotIndicator: (barData, spotIndexes) =>
+                        spotIndexes
+                            .map((i) => TouchedSpotIndicatorData(
+                                  FlLine(color: barData.colors[i]),
+                                  FlDotData(),
+                                ))
+                            .toList(),
                     touchTooltipData: LineTouchTooltipData(
                       showOnTopOfTheChartBoxArea: true,
                       fitInsideHorizontally: true,
@@ -103,22 +114,23 @@ class RankGraphWidget extends StatelessWidget {
                   extraLinesData: ExtraLinesData(
                     extraLinesOnTop: false,
                     horizontalLines: tierDatasAggregated
-                        .where((x) => x.maxMMR > minY && x.minMMR < maxY)
+                        .where((x) => x.maxMMR > minY && x.minMMR < maxY && x.tier != "Unranked")
                         .map((x) => tierTitleText(
                               max(x.minMMR.toDouble(), minY),
                               x.tier,
+                              // x.pic,
                             ))
                         .toList(),
                   ),
                   rangeAnnotations: RangeAnnotations(
                     horizontalRangeAnnotations: tierDatasAggregated
-                        .where((x) => x.minMMR < maxY && x.maxMMR > minY)
+                        .where((x) => x.minMMR < maxY && x.maxMMR > minY && x.tier != "Unranked")
                         .map(
                           (x) => HorizontalRangeAnnotation(
                             y1: max(minY, x.minMMR.toDouble()),
                             y2: min(maxY, x.maxMMR.toDouble()),
                             color: addOpacity(
-                                getSplitColor(tierDatas, x.maxMMR), 0.5),
+                                getTierColorByName(x.maxMMR, x.tier), 0.5),
                           ),
                         )
                         .toList(),
@@ -128,8 +140,12 @@ class RankGraphWidget extends StatelessWidget {
                     border: Border.all(color: Colors.white.withOpacity(0.5)),
                   ),
                   gridData: FlGridData(
-                    drawVerticalLine: false,
-                    // verticalInterval: msPerDay,
+                    drawVerticalLine: true,
+                    verticalInterval: interval,
+                    getDrawingVerticalLine: (val) => FlLine(
+                      strokeWidth: 0.25,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
                     drawHorizontalLine: false,
                     // horizontalInterval: 1,
                     // getDrawingHorizontalLine: (val) => FlLine(
@@ -177,8 +193,13 @@ class RankGraphWidget extends StatelessWidget {
     );
   }
 
-  HorizontalLine tierTitleText(double y, String title) {
+  HorizontalLine tierTitleText(
+    double y,
+    String title,
+    // ui.Image pic,
+  ) {
     return HorizontalLine(
+      // image: pic,
       y: y,
       color: Colors.transparent,
       strokeWidth: 0,
@@ -187,18 +208,31 @@ class RankGraphWidget extends StatelessWidget {
         alignment: Alignment.topLeft,
         padding: const EdgeInsets.only(left: 5, bottom: 0),
         style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 12),
-        labelResolver: (line) =>  title,
+        labelResolver: (line) => title,
       ),
     );
   }
 
-  LineChartBarData data(List<TierGraphPoint> data) => LineChartBarData(
-        spots: data.map((x) => x.spot).toList(),
-        colors: const [const Color(0xffe58517)],
-        isCurved: data.length < 30,
-        curveSmoothness: 0.2,
-        dotData: FlDotData(show: data.length < 30),
-      );
+  LineChartBarData data(List<TierGraphPoint> data) {
+    var spots = data.map((x) => x.spot).toList();
+    var colors = data.map((x) => getTierColorByName(x.mmr, x.tier)).toList();
+    double min = spots.first.x;
+    double max = spots.last.x;
+    double range = max - min;
+    var stops = spots.map((x) => (x.x - min) / range).toList();
+    return LineChartBarData(
+      spots: spots,
+      colors: colors,
+      colorStops: stops,
+      shadow: const Shadow(
+        blurRadius: 8,
+        color: Colors.black,
+      ),
+      isCurved: data.length < 30,
+      curveSmoothness: 0.2,
+      dotData: FlDotData(show: data.length < 30),
+    );
+  }
 
   Color addOpacity(Color color, double opacity) {
     if (color == Colors.transparent) return color;
@@ -207,8 +241,14 @@ class RankGraphWidget extends StatelessWidget {
 
   Color getSplitColor(List<TierData> tiers, int value) {
     var name = getSplitName(tiers, value);
+    return getTierColorByName(value, name);
+  }
+
+  Color getTierColorByName(int value, String name) {
     if (name == null) return Colors.transparent;
     switch (name.split(' ')[0]) {
+      case ("Unranked"):
+        return const Color(0xffe58517);
       case ("Bronze"):
         return const Color(0xffa5600d);
       case ("Silver"):
