@@ -112,7 +112,7 @@ class RankGraphDistributions extends StatelessWidget {
                           ) {
                             return BarTooltipItem(
                               "${ordered[group.x].name}" +
-                                  "\n${rod.y.round()} / $total" +
+                                  "\n${rod.y.round()} players" +
                                   "\n${(rod.y / total * 100 * 1000).round() / 1000}%",
                               // rod.y.round().toString(),
                               const TextStyle(
