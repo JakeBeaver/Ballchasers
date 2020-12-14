@@ -68,11 +68,7 @@ String getSplitName(
     // int minMMR = tier.map((x) => x.minMMR).reduce(min);
     // int maxMMR = tier.map((x) => x.maxMMR).reduce(max);
     var averageMMR = ((tier.maxMMR + tier.minMMR) / 2).floor();
-    if (tier.tier.startsWith("Grand") &&
-        averageMMR - 4 < value &&
-        averageMMR + 4 > value) {
-      print(averageMMR);
-    }
+
     if (averageMMR != value) return null;
   }
   return tier?.tier;

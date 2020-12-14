@@ -7,17 +7,24 @@ import 'matchWidget.dart';
 class SessionWidget extends StatelessWidget {
   final Session session;
   SessionWidget(this.session);
-  final df = DateFormat('EEEE, d MMM\nHH:mm, ');
+  final df = DateFormat('EEEE, d MMM');
   final tf = DateFormat('HH:mm');
 
   @override
   Widget build(BuildContext context) {
     final nOfMatches =
         session.matches.map((x) => x.matches).fold(0, (x, y) => x + y);
-    final String title =
-        df.format(session.matches.last.dateCollected.toLocal()) +
-            nOfMatches.toString() +
-            (nOfMatches == 1 ? " Match" : " Matches");
+    final nOfWins = session.matches.map((x) => x.wins).fold(0, (x, y) => x + y);
+    final timeStamp = session.matches.last.dateCollected.toLocal();
+    final String time = tf.format(timeStamp);
+    final String date = df.format(timeStamp);
+    final String matches = nOfMatches == 1 ? "Match" : "Matches";
+    final String wins = nOfWins == 1 ? "Win" : " Wins";
+    final String winPerc = "${(nOfWins / nOfMatches * 100).round()}%";
+    final String title = "$date" +
+        "\n$time, $nOfMatches $matches" +
+        "\n$nOfWins $wins ($winPerc)";
+
     return Column(
       children: <Widget>[
         SizedBox(height: 10),

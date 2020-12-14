@@ -135,6 +135,8 @@ class TrackerData with ChangeNotifier {
   // String avatarUrl() => isLoading ? null :
   List<PlaylistRank> playlistRanks;
 
+  SeasonReward seasonReward;
+
   Future fetchStats() async {
     try {
       String address = getStatsAddress(player.platform, player.nameForSearch);
@@ -153,6 +155,8 @@ class TrackerData with ChangeNotifier {
               (e) => PlaylistRank(e, playerId: playerId, trackerDataRef: this))
           .where((x) => x.display)
           .toList();
+      var overviewMap = segments.firstWhere((x) => x["type"] == "overview");
+      seasonReward = SeasonReward(overviewMap);
 
       var handle = _statsBody["data"]["platformInfo"]["platformUserHandle"];
       var avatarUrl = _statsBody["data"]["platformInfo"]["avatarUrl"];
@@ -214,6 +218,19 @@ class TrackerData with ChangeNotifier {
                   },
           )
         : null;
+  }
+}
+
+class SeasonReward { 
+  String picUrl;
+  String rank;
+  double percentile;
+  int wins;
+  SeasonReward(Map<String, dynamic> overviewMap) {
+    picUrl = overviewMap["stats"]["seasonRewardLevel"]["metadata"]["iconUrl"];
+    rank = overviewMap["stats"]["seasonRewardLevel"]["metadata"]["rankName"];
+    percentile = overviewMap["stats"]["seasonRewardLevel"]["percentile"];
+    wins = overviewMap["stats"]["seasonRewardWins"]["value"];
   }
 }
 
@@ -382,9 +399,9 @@ class PlaylistRank {
       var tierName = tiers[bar.tierId].replaceAll("Champion", "Champ");
       tierDistributions.add(TierCount(tierName, bar.count));
     }
-    for (var tier in tiers){
+    for (var tier in tiers) {
       var tierName = tier.replaceAll("Champion", "Champ");
-      if (!tierDistributions.any((element) => element.name == tierName)){
+      if (!tierDistributions.any((element) => element.name == tierName)) {
         tierDistributions.add(TierCount(tierName, 0));
       }
     }
@@ -420,6 +437,9 @@ class PlaylistRank {
     var parsedResponse = json.decode(response.body) as Map<String, dynamic>;
     var playlistData = parsedResponse["data"]["$playlistId"] as List<dynamic>;
     var newData = playlistData.map((x) => TierGraphPoint(x)).toList();
+    newData.sort((a, b) =>
+        a.collectionDateMillisecondsSinceEpoch -
+        b.collectionDateMillisecondsSinceEpoch);
     chartData = newData;
   }
 }
@@ -494,14 +514,6 @@ class TierData {
     int tierId = x["tier"];
     tier = tiers[tierId].replaceAll("Champion", "Champ");
     division = divisions[x["division"]];
-    // countThisSeason = distributions.firstWhere((x) => x.tierId == tierId).count;
-    // print("$tier: $countThisSeason");
-    // String picUrlPre20 =
-    //     "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-$tierId.png";
-    // String picUrl20AndOn =
-    //     "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s15rank$tierId.png";
-    // getPicFuture = getImage(tierId < 20 ? picUrlPre20 : picUrl20AndOn)
-    //     .then((r) => pic = r);
   }
 }
 

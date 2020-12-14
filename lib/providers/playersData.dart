@@ -70,7 +70,6 @@ class PlayersData with ChangeNotifier {
     String contents = await file.readAsString();
     var list = json.decode(contents) as List<dynamic>;
     _data = list.map((x) => Player.fromJson(x)).toList();
-    // print(_data[0].statsBody.length);
   }
 }
 

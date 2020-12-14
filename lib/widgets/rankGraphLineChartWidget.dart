@@ -74,15 +74,31 @@ class RankGraphLineChart extends StatelessWidget {
         lineBarsData: [data(chartData)],
         extraLinesData: ExtraLinesData(
           extraLinesOnTop: false,
-          horizontalLines: tierDatasAggregated
-              .where((x) =>
-                  x.maxMMR > minY && x.minMMR < maxY && x.tier != "Unranked")
-              .map((x) => tierTitleText(
-                    max(x.minMMR.toDouble(), minY),
-                    x.tier,
-                    // x.pic,
-                  ))
-              .toList(),
+          horizontalLines: [
+            ...tierDatasAggregated
+                .where((x) =>
+                    x.maxMMR > minY && x.minMMR < maxY && x.tier != "Unranked")
+                .map((x) => tierTitleText(
+                      max(x.minMMR.toDouble(), minY),
+                      x.tier,
+                    ))
+                .toList(),
+            ...tierDatasAggregated
+                .where((x) => x.tier != "Unranked")
+                .fold<List<int>>(
+                  [],
+                  (output, tier) => [...output, tier.minMMR, tier.maxMMR],
+                )
+                .where((x) => x > minY && x < maxY)
+                .map(
+                  (e) => HorizontalLine(
+                    y: e.toDouble(),
+                    strokeWidth: 1,
+                    color: Colors.white.withOpacity(0.05),
+                  ),
+                )
+                .toList(),
+          ],
         ),
         rangeAnnotations: RangeAnnotations(
           horizontalRangeAnnotations: tierDatasAggregated
@@ -211,6 +227,5 @@ String getTooltipTitle(
   var formattedDate = tf.format(date);
 
   var mmr = lineBarSpot.y.toInt();
-  // print("mmr: $mmr, tier: $tier");
   return "$formattedDate\nRating: $mmr\n${tier?.tier} ${tier?.division}";
 }

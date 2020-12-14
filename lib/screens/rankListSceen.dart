@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:RLRank/providers/trackerData.dart';
 import 'package:RLRank/widgets/playerListDrawer.dart';
 import 'package:RLRank/widgets/rankWidget.dart';
+import 'package:RLRank/widgets/seasonRewardTileWidget.dart';
 import 'package:RLRank/widgets/sessionWidget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -43,8 +44,7 @@ class _RankListScreenState extends State<RankListScreen> {
                 },
               )
             ],
-            title:
-                Text(prov.player?.handle ?? prov.player?.name ?? ""),
+            title: Text(prov.player?.handle ?? prov.player?.name ?? ""),
             leading: prov.player?.picUrl == null
                 ? CircularProgressIndicator()
                 : GestureDetector(
@@ -68,6 +68,8 @@ class _RankListScreenState extends State<RankListScreen> {
                 : ListView(
                     shrinkWrap: true,
                     children: [
+                      if (prov.seasonReward != null)
+                        SeasonRewardTile(prov.seasonReward),
                       if (prov.playlistRanks != null)
                         Wrap(
                             alignment: WrapAlignment.spaceEvenly,

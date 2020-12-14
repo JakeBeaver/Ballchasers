@@ -4,6 +4,7 @@ import 'package:RLRank/widgets/rankGraphLineChartWidget.dart';
 import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class RankGraphDistributions extends StatelessWidget {
   final List<TierCount> tierDistributions;
@@ -51,13 +52,15 @@ class RankGraphDistributions extends StatelessWidget {
       ordered[getTierOrdinalFromName(c.name) * 10 - (2 - tierNumber)] = c;
     }
     var mq = MediaQuery.of(context);
+    var nf = NumberFormat.compact();
+    String numberString = nf.format(total).replaceAll(',', ' ');
     return total == unrankedCount
         ? Container()
         : Column(
             children: [
               SizedBox(height: 20),
               whiteTitle(
-                  "Distribution of $total players tracked this season:",
+                  "Distribution of $numberString players tracked this season:",
                   textAlign: TextAlign.center),
               SizedBox(height: 20),
               AspectRatio(
@@ -84,12 +87,19 @@ class RankGraphDistributions extends StatelessWidget {
                           getTitles: (value) {
                             var name = ordered[value].name;
                             if (name.endsWith(" II"))
-                              return name
+                              name = name
                                   .split(" ")
                                   .where((x) => !x.endsWith("I"))
                                   .join(" ");
-                            if (!name.endsWith("I")) return name;
-                            return "";
+                            else if (!name.endsWith("I"))
+                              name = name;
+                            else
+                              return "";
+                            
+                            if (name.contains(' '))
+                              name = name.split(' ').map((x)=>x[0]).join('');
+                            if (name == 'SL') return "SSL";  
+                            return name;
                           },
                           rotateAngle: 20,
                           reservedSize: 30,
