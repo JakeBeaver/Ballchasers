@@ -28,6 +28,7 @@ class AdMobService {
       padding: const EdgeInsets.all(10),
       child: NativeAdmob(
         options: const NativeAdmobOptions(
+          showMediaContent: true,
           adLabelTextStyle: const NativeTextStyle(
               color: AppColors.button, backgroundColor: Colors.white),
           bodyTextStyle: NativeTextStyle(color: AppColors.blue),
