@@ -14,10 +14,8 @@ class SessionsScreen extends StatelessWidget {
     if (!prov.isLoading) {
       int count = 0;
       int listAdId = 0;
-      DateTime cutoffDate = DateTime.now().subtract(Duration(days: 20));
 
       for (var session in prov.sessions) {
-        //.where((x) => x.startDate.isAfter(cutoffDate))) {
         children.addAll(SessionWidget(session).getChildren());
         count += (session.matches.length + 1);
         if (count > 10) {

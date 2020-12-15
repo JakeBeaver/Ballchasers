@@ -24,19 +24,25 @@ class _RankListScreenState extends State<RankListScreen> {
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<TrackerData>(context);
+    var mq = MediaQuery.of(context);
     if (prov.player == null) {
       prov.refresh(context);
     }
     var listViewChildren = [
       if (prov.seasonReward != null) SeasonRewardTile(prov.seasonReward),
       if (prov.playlistRanks != null)
-        Wrap(
+        if (mq.orientation == Orientation.portrait)
+          ...prov.playlistRanks.map((x) => RankWidget(x)).toList()
+        else
+          Wrap(
             alignment: WrapAlignment.spaceEvenly,
-            children: prov.playlistRanks.map((x) => RankWidget(x)).toList()),
+            children: prov.playlistRanks.map((x) => RankWidget(x)).toList(),
+          ),
       // if ((prov.sessions?.length ?? 0) > 0)
       //   SizedBox(height: 20),
       AdMobService.nativeAd("rank list screen ad"),
-      if ((prov.sessions?.length ?? 0) > 0) ...SessionWidget(prov.sessions[0]).getChildren(),
+      if ((prov.sessions?.length ?? 0) > 0)
+        ...SessionWidget(prov.sessions[0]).getChildren(),
 
       // ...prov.sessions
       //     .map((session) => SessionWidget(session))
@@ -98,7 +104,8 @@ class _RankListScreenState extends State<RankListScreen> {
             child: prov.isLoading
                 ? loadingData()
                 : ListView.builder(
-                    itemBuilder : (ctx, index)=>listViewChildren.elementAt(index),
+                    itemBuilder: (ctx, index) =>
+                        listViewChildren.elementAt(index),
                     itemCount: listViewChildren.length,
                     shrinkWrap: true,
                     // children: listViewChildren,

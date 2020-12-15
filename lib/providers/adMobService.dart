@@ -45,7 +45,7 @@ class AdMobService {
         adUnitID: kReleaseMode
             ? AdMobService.nativeAdId
             : AdMobService.testNativeAdUnitId,
-        numberAds: 3,
+        numberAds: 1,
         controller: adController,
         type: full ? NativeAdmobType.full : NativeAdmobType.banner,
         error: GestureDetector(
@@ -66,7 +66,7 @@ class AdMobService {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: Colors.grey[700],
+          color: goldTitleColor,//Colors.grey[700],
         ),
       ),
     );
