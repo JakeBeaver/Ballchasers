@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+const Color blueTitleColor = Color(0xffb5d0ff);
+const Color deepBlueTitleColor = Color(0xff239ad9);
+const Color goldTitleColor = Color(0xffcbb765);
+const Color buttonColor =  Color(0xff123280);
+const Color appBarColor = Color(0xff041d59);
+
 Widget whiteTitle(
   String text, {
   double sizeAdjust = 0,
@@ -26,7 +32,7 @@ Widget goldTitle(
     style: TextStyle(
       fontSize: 18 + sizeAdjust,
       fontWeight: FontWeight.bold,
-      color: Color(0xffcbb765),
+      color: goldTitleColor,
     ),
   );
 }
@@ -37,7 +43,7 @@ Widget blueTitle(String text, {double sizeAdjust = 0}) {
     style: TextStyle(
       fontSize: 14 + sizeAdjust,
       fontWeight: FontWeight.bold,
-      color: Color(0xffb5d0ff),
+      color: blueTitleColor,
     ),
   );
 }
@@ -48,7 +54,7 @@ Widget deepBlueTitle(String text, {double sizeAdjust = 0}) {
     style: TextStyle(
       fontSize: 14 + sizeAdjust,
       fontWeight: FontWeight.bold,
-      color: Color(0xff239ad9),
+      color: deepBlueTitleColor,
     ),
   );
 }

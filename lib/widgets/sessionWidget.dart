@@ -7,11 +7,28 @@ import 'matchWidget.dart';
 class SessionWidget extends StatelessWidget {
   final Session session;
   SessionWidget(this.session);
-  final df = DateFormat('EEEE, d MMM');
-  final tf = DateFormat('HH:mm');
+
+  List<Widget> getChildren() => [
+        SessionHeader(session),
+        ...session.matches.map((x) => MatchWidget(x)).toList(),
+      ];
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      children: getChildren(),
+    );
+  }
+}
+
+class SessionHeader extends StatelessWidget {
+  const SessionHeader(this.session);
+  final Session session;
+
+  @override
+  Widget build(BuildContext context) {
+    final df = DateFormat('EEEE, d MMM');
+    final tf = DateFormat('HH:mm');
     final nOfMatches =
         session.matches.map((x) => x.matches).fold(0, (x, y) => x + y);
     final nOfWins = session.matches.map((x) => x.wins).fold(0, (x, y) => x + y);
@@ -24,29 +41,24 @@ class SessionWidget extends StatelessWidget {
     final String title = "$date" +
         "\n$time, $nOfMatches $matches" +
         "\n$nOfWins $wins ($winPerc)";
-
-    return Column(
-      children: <Widget>[
-        SizedBox(height: 10),
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xff4c138e), Color(0xff239ad9)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20),
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.only(top: 10, bottom: 5),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [const Color(0xff4c138e), const Color(0xff239ad9)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
+          borderRadius: BorderRadius.circular(20),
         ),
-        SizedBox(height: 5),
-        ...session.matches.map((x) => MatchWidget(x)).toList(),
-      ],
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 }

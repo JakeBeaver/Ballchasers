@@ -13,7 +13,7 @@ class MatchWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final nOfMatches = match.matches;
     return Container(
-      margin: EdgeInsets.all(4),
+      margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         border: Border.all(

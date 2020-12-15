@@ -44,13 +44,18 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<PlayersData>(context);
-    return prov.ready && prov.data.length == 0
-        ? AddPlayerScreen()
-        : RankListScreen();
+    bool showAddPlayerScreen = prov.ready && prov.data.length == 0;
+    return showAddPlayerScreen ? AddPlayerScreen() : RankListScreen();
     // : Center(child: CircularProgressIndicator());
   }
 }

@@ -1,10 +1,12 @@
 import 'dart:ui';
+import 'package:RLRank/providers/adMobService.dart';
 
 import 'package:RLRank/providers/trackerData.dart';
 import 'package:RLRank/widgets/playerListDrawer.dart';
 import 'package:RLRank/widgets/rankWidget.dart';
 import 'package:RLRank/widgets/seasonRewardTileWidget.dart';
 import 'package:RLRank/widgets/sessionWidget.dart';
+import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +27,36 @@ class _RankListScreenState extends State<RankListScreen> {
     if (prov.player == null) {
       prov.refresh(context);
     }
+    var listViewChildren = [
+      if (prov.seasonReward != null) SeasonRewardTile(prov.seasonReward),
+      if (prov.playlistRanks != null)
+        Wrap(
+            alignment: WrapAlignment.spaceEvenly,
+            children: prov.playlistRanks.map((x) => RankWidget(x)).toList()),
+      // if ((prov.sessions?.length ?? 0) > 0)
+      //   SizedBox(height: 20),
+      AdMobService.nativeAd("rank list screen ad"),
+      if ((prov.sessions?.length ?? 0) > 0) ...SessionWidget(prov.sessions[0]).getChildren(),
+
+      // ...prov.sessions
+      //     .map((session) => SessionWidget(session))
+      //     .toList(),
+      if ((prov.sessions?.length ?? 0) > 1)
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          height: 50,
+          child: RaisedButton(
+            // shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.circular(18.0)),
+            color: buttonColor,
+            child: Text("View More Sessions"),
+            textColor: Colors.white,
+            onPressed: () {
+              Navigator.of(context).pushNamed("sessions");
+            },
+          ),
+        ),
+    ];
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
@@ -65,43 +97,11 @@ class _RankListScreenState extends State<RankListScreen> {
             onRefresh: () => prov.refresh(context),
             child: prov.isLoading
                 ? loadingData()
-                : ListView(
+                : ListView.builder(
+                    itemBuilder : (ctx, index)=>listViewChildren.elementAt(index),
+                    itemCount: listViewChildren.length,
                     shrinkWrap: true,
-                    children: [
-                      if (prov.seasonReward != null)
-                        SeasonRewardTile(prov.seasonReward),
-                      if (prov.playlistRanks != null)
-                        Wrap(
-                            alignment: WrapAlignment.spaceEvenly,
-                            children: prov.playlistRanks
-                                .map((x) => RankWidget(x))
-                                .toList()),
-                      if ((prov.sessions?.length ?? 0) > 0)
-                        SizedBox(height: 20),
-                      if ((prov.sessions?.length ?? 0) > 0)
-                        SessionWidget(prov.sessions[0]),
-
-                      // ...prov.sessions
-                      //     .map((session) => SessionWidget(session))
-                      //     .toList(),
-
-                      if ((prov.sessions?.length ?? 0) > 1)
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 10),
-                          height: 50,
-                          child: RaisedButton(
-                            // shape: RoundedRectangleBorder(
-                            //     borderRadius: BorderRadius.circular(18.0)),
-                            color: Color(0xff123280),
-                            child: Text("View More Sessions"),
-                            textColor: Colors.white,
-                            onPressed: () {
-                              Navigator.of(context).pushNamed("sessions");
-                            },
-                          ),
-                        ),
-                    ],
+                    // children: listViewChildren,
                   ),
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:RLRank/providers/adMobService.dart';
 import 'package:RLRank/providers/trackerData.dart';
 import 'package:RLRank/widgets/sessionWidget.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,27 @@ class SessionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<TrackerData>(context);
+
+    List<Widget> children = [];
+    if (!prov.isLoading) {
+      int count = 0;
+      int listAdId = 0;
+      DateTime cutoffDate = DateTime.now().subtract(Duration(days: 20));
+
+      for (var session in prov.sessions) {
+        //.where((x) => x.startDate.isAfter(cutoffDate))) {
+        children.addAll(SessionWidget(session).getChildren());
+        count += (session.matches.length + 1);
+        if (count > 10) {
+          count = 0;
+          children.add(AdMobService.nativeAd(
+            "ad after session ${listAdId++}",
+            full: true,
+          ));
+        }
+      }
+    }
+
     // AppBar appbar = AppBar(
     //   title: Text("Sessions"),
     //   backgroundColor: Color(0xff041d59),
@@ -28,35 +50,16 @@ class SessionsScreen extends StatelessWidget {
               floating: true,
             ),
             new SliverList(
-              delegate: new SliverChildListDelegate(
-                prov.sessions.map((session) => SessionWidget(session)).toList(),
+              delegate: new SliverChildBuilderDelegate(
+                (ctx, index) => children.elementAt(index),
+                addAutomaticKeepAlives:  true,
+                addRepaintBoundaries: true,
+                childCount: children.length,
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  RefreshIndicator getSessionsView(TrackerData prov, BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () => prov.refresh(context),
-      child: prov.isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView(
-              shrinkWrap: true,
-              children: [
-                // ...prov.playlistRanks.map((x) => RankWidget(x)).toList(),
-                // if (prov.sessions.length > 0)
-                // SizedBox(height: 20),
-                // if (prov.sessions.length > 0)
-                // SessionWidget(prov.sessions[0], latest: true),
-
-                ...prov.sessions
-                    .map((session) => SessionWidget(session))
-                    .toList(),
-              ],
-            ),
     );
   }
 }

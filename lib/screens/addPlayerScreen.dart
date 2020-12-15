@@ -1,5 +1,6 @@
 import 'package:RLRank/providers/playersData.dart';
 import 'package:RLRank/providers/trackerData.dart';
+import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +34,7 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
       backgroundColor: Color(0xff001538),
       appBar: AppBar(
         title: Text("Add New Player"),
-        backgroundColor: Color(0xff041d59),
+        backgroundColor: appBarColor,
       ),
       body: finding
           ? Center(child: CircularProgressIndicator())
