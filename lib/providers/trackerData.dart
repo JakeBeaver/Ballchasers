@@ -37,7 +37,7 @@ class TrackerData with ChangeNotifier {
   }
 
   bool offline = false;
-
+  DateTime lastRefresh = DateTime.fromMillisecondsSinceEpoch(0);
   Future refresh(BuildContext context, {bool revertIfFailed = false}) async {
     // isLoading = true;
     // notifyListeners();
@@ -75,6 +75,7 @@ class TrackerData with ChangeNotifier {
     if (failed) {
       throw new Exception();
     }
+    lastRefresh = DateTime.now();
     prov.addOrUpdatePlayer(player);
   }
 

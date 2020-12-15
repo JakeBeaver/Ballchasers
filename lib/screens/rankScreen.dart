@@ -2,73 +2,90 @@ import 'package:RLRank/providers/trackerData.dart';
 // import 'package:RLRank/widgets/rankGraphDistributionsWidget.dart';
 // import 'package:RLRank/widgets/rankGraphLineChartWidget.dart';
 import 'package:RLRank/widgets/rankGraphWidget.dart';
+import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class RankScreen extends StatelessWidget {
+class RankScreen extends StatefulWidget {
+  @override
+  _RankScreenState createState() => _RankScreenState();
+}
+
+class _RankScreenState extends State<RankScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-  final double arrowWidth = 45;
+
+  static const double arrowWidth = 45;
+  DateTime lastRefresh = DateTime.fromMillisecondsSinceEpoch(0);
+  List<Widget> children;
+  AppBar appbar;
+  PlaylistRank rank;
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<TrackerData>(context);
 
-    String rankName = ModalRoute.of(context).settings.arguments;
-    PlaylistRank rank =
-        prov.playlistRanks.firstWhere((x) => x.name == rankName);
+    if (prov.lastRefresh.isAfter(lastRefresh)) {
+      String rankName = ModalRoute.of(context).settings.arguments;
+      rank = prov.playlistRanks.firstWhere((x) => x.name == rankName);
 
-    var children = <Widget>[
-      Center(
-          child: Text(
-        rank.tierName + "\n" + rank.divisionName,
-        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-        textAlign: TextAlign.center,
-      )),
-      SizedBox(height: 20),
-      Center(
-          child: Text("MMR: " + rank.mmr.toString(),
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
-      Center(
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          if (rank.divUp != null)
-            Row(
-              children: [
-                iconUp(),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    iconUp(visible: false),
-                    Text(
-                      rank.divUp?.toString() ?? "",
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          if (rank.divUp != null && rank.divDown != null)
-            SizedBox(width: arrowWidth),
-          if (rank.divDown != null)
-            Row(
-              // alignment: Alignment.bottomCenter,
-              children: [
-                iconDown(),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    iconDown(visible: false),
-                    Text(rank.divDown?.toString() ?? "",
+      children = <Widget>[
+        Center(
+            child: Text(
+          rank.tierName + "\n" + rank.divisionName,
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        )),
+        SizedBox(height: 20),
+        Center(
+            child: Text("MMR: " + rank.mmr.toString(),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
+        Center(
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            if (rank.divUp != null)
+              Row(
+                children: [
+                  iconUp(),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      iconUp(visible: false),
+                      Text(
+                        rank.divUp?.toString() ?? "",
                         style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              ],
-            ),
-        ]),
-      ),
-    ];
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            if (rank.divUp != null && rank.divDown != null)
+              SizedBox(width: arrowWidth),
+            if (rank.divDown != null)
+              Row(
+                // alignment: Alignment.bottomCenter,
+                children: [
+                  iconDown(),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      iconDown(visible: false),
+                      Text(rank.divDown?.toString() ?? "",
+                          style: TextStyle(
+                              fontSize: 25, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ],
+              ),
+          ]),
+        ),
+      ];
 
+      appbar = AppBar(
+        title: Text(rank.name),
+        backgroundColor: AppColors.appBar,
+      );
+      lastRefresh = DateTime.now();
+    }
     var mq = MediaQuery.of(context);
 
     var icon = Container(
@@ -80,15 +97,10 @@ class RankScreen extends StatelessWidget {
           child: Hero(
               tag: "icon_" + rank.name,
               child: CachedNetworkImage(
-                  placeholder: (c, a) => CircularProgressIndicator(),
+                  placeholder: (c, a) => const CircularProgressIndicator(),
                   imageUrl: rank.tierIcon)),
         ),
       ),
-    );
-
-    AppBar appbar = AppBar(
-      title: Text(rank.name),
-      backgroundColor: Color(0xff041d59),
     );
 
     bool isPortraitList = mq.size.aspectRatio < 1.5;
@@ -102,14 +114,14 @@ class RankScreen extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       floatingActionButton: prov.disconnectedIcon(scaffoldKey: scaffoldKey),
-      backgroundColor: Color(0xff001538),
+      backgroundColor: AppColors.background,
       appBar: appbar,
       body: RefreshIndicator(
         onRefresh: () => prov.refresh(context),
         child: isPortraitList
             ? ListView(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ...children,
                   iconGraphStack,
                 ],

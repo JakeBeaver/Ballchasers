@@ -49,13 +49,13 @@ class _RankListScreenState extends State<RankListScreen> {
       //     .toList(),
       if ((prov.sessions?.length ?? 0) > 1)
         Container(
-          margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           height: 50,
           child: RaisedButton(
             // shape: RoundedRectangleBorder(
             //     borderRadius: BorderRadius.circular(18.0)),
-            color: buttonColor,
-            child: Text("View More Sessions"),
+            color: AppColors.button,
+            child: const Text("View More Sessions"),
             textColor: Colors.white,
             onPressed: () {
               Navigator.of(context).pushNamed("sessions");
@@ -69,8 +69,8 @@ class _RankListScreenState extends State<RankListScreen> {
         Scaffold(
           key: scaffoldKey,
           floatingActionButton: prov.disconnectedIcon(scaffoldKey: scaffoldKey),
-          drawer: PlayerListDrawer(),
-          backgroundColor: Color(0xff001538),
+          drawer: const PlayerListDrawer(),
+          backgroundColor: AppColors.background,
           appBar: AppBar(
             actions: <Widget>[
               IconButton(
@@ -84,7 +84,7 @@ class _RankListScreenState extends State<RankListScreen> {
             ],
             title: Text(prov.player?.handle ?? prov.player?.name ?? ""),
             leading: prov.player?.picUrl == null
-                ? CircularProgressIndicator()
+                ? const CircularProgressIndicator()
                 : GestureDetector(
                     child: ClipOval(
                       child: CachedNetworkImage(
@@ -97,7 +97,7 @@ class _RankListScreenState extends State<RankListScreen> {
                             scaffoldKey.currentState.openDrawer();
                           },
                   ),
-            backgroundColor: Color(0xff041d59),
+            backgroundColor: AppColors.appBar,
           ),
           body: RefreshIndicator(
             onRefresh: () => prov.refresh(context),
@@ -107,7 +107,6 @@ class _RankListScreenState extends State<RankListScreen> {
                     itemBuilder: (ctx, index) =>
                         listViewChildren.elementAt(index),
                     itemCount: listViewChildren.length,
-                    shrinkWrap: true,
                     // children: listViewChildren,
                   ),
           ),
@@ -144,7 +143,7 @@ class _RankListScreenState extends State<RankListScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
                             border:
-                                Border.all(color: Color(0xffab9745), width: 5),
+                                Border.all(color: AppColors.helpText, width: 5),
                           ),
                         ),
                       ],
@@ -154,7 +153,8 @@ class _RankListScreenState extends State<RankListScreen> {
                   body: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: Color(0xffab9745), width: 5)),
+                        border:
+                            Border.all(color: AppColors.helpText, width: 5)),
                     alignment: Alignment.center,
                     child: FittedBox(
                       child: Column(
@@ -162,8 +162,8 @@ class _RankListScreenState extends State<RankListScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           helpText("Pull down\nto refresh", 20),
-                          Icon(Icons.arrow_downward,
-                              color: Color(0xffab9745), size: 140),
+                          const Icon(Icons.arrow_downward,
+                              color: AppColors.helpText, size: 140),
                         ],
                       ),
                     ),
@@ -210,7 +210,7 @@ class _RankListScreenState extends State<RankListScreen> {
       style: TextStyle(
         fontSize: 20 + adjustSize,
         fontWeight: FontWeight.bold,
-        color: Color(0xffab9745),
+        color: AppColors.helpText,
       ),
     );
   }

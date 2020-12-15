@@ -1,4 +1,5 @@
 import 'package:RLRank/providers/trackerData.dart';
+import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -46,7 +47,7 @@ class SessionHeader extends StatelessWidget {
         margin: const EdgeInsets.only(top: 10, bottom: 5),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color(0xff4c138e), const Color(0xff239ad9)],
+            colors: const [AppColors.purple, AppColors.deepBlue],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

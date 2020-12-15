@@ -1,5 +1,6 @@
 import 'package:RLRank/providers/playersData.dart';
 import 'package:RLRank/providers/trackerData.dart';
+import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ class PlayerListDrawer extends StatelessWidget {
     var mq = MediaQuery.of(context);
     return Drawer(
       child: Container(
-        color: Color(0xff041d59),
+        color: AppColors.appBar,
         child: ListView(
           children: [
             SizedBox(height: mq.viewInsets.top),
@@ -67,7 +68,7 @@ class PlayerListDrawer extends StatelessWidget {
                           showDialog(
                               context: context,
                               builder: (ctx) => AlertDialog(
-                                      backgroundColor: Color(0xff041d59),
+                                      backgroundColor: AppColors.appBar,
                                       title: Text(
                                         player.handle,
                                         style: TextStyle(color: Colors.white),
@@ -76,12 +77,12 @@ class PlayerListDrawer extends StatelessWidget {
                                           "Are you sure you want to delete player from the list?"),
                                       actions: [
                                         FlatButton(
-                                            child: Text("No"),
+                                            child: blueTitle("No"),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             }),
                                         FlatButton(
-                                            child: Text("Yes"),
+                                            child: blueTitle("Yes"),
                                             onPressed: () async {
                                               await prov.removePlayer(player);
                                               if (prov.hasPlayers) {

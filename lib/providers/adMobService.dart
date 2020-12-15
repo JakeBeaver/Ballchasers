@@ -1,4 +1,3 @@
-
 import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,33 +13,31 @@ class AdMobService {
   static const String testNativeAdUnitId =
       'ca-app-pub-3940256099942544/2247696110';
 
-  static Map<String, NativeAdmobController> _nativeAdControllers = {};
-  static Widget nativeAd(String key,
-      {bool full = false, Widget error, Widget loading}) {
+  static final Map<String, NativeAdmobController> _nativeAdControllers = {};
+  static Widget nativeAd(
+    String key, {
+    bool full = false,
+  }) {
     if (!_nativeAdControllers.containsKey(key)) {
       _nativeAdControllers[key] = NativeAdmobController();
     }
-    var adController = _nativeAdControllers[key];
+    final adController = _nativeAdControllers[key];
     return Container(
       height: full ? 330 : 90,
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-      padding: EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+      padding: const EdgeInsets.all(10),
       child: NativeAdmob(
-        options: NativeAdmobOptions(
-          adLabelTextStyle: NativeTextStyle(
-              color: buttonColor, backgroundColor: Colors.white),
-          bodyTextStyle: NativeTextStyle(color: blueTitleColor),
-          advertiserTextStyle: NativeTextStyle(
-            color: goldTitleColor,
-          ),
-          headlineTextStyle: NativeTextStyle(
-            color: Colors.white,
-          ),
-          callToActionStyle: NativeTextStyle(
-              color: Colors.white, backgroundColor: buttonColor),
-          priceTextStyle: NativeTextStyle(color: goldTitleColor),
-          ratingColor: goldTitleColor,
-          storeTextStyle: NativeTextStyle(color: goldTitleColor),
+        options: const NativeAdmobOptions(
+          adLabelTextStyle: const NativeTextStyle(
+              color: AppColors.button, backgroundColor: Colors.white),
+          bodyTextStyle: NativeTextStyle(color: AppColors.blue),
+          advertiserTextStyle: const NativeTextStyle(color: AppColors.gold),
+          headlineTextStyle: const NativeTextStyle(color: Colors.white),
+          callToActionStyle: const NativeTextStyle(
+              color: Colors.white, backgroundColor: AppColors.button),
+          priceTextStyle: const NativeTextStyle(color: AppColors.gold),
+          ratingColor: AppColors.gold,
+          storeTextStyle: const NativeTextStyle(color: AppColors.gold),
         ),
         adUnitID: kReleaseMode
             ? AdMobService.nativeAdId
@@ -51,7 +48,6 @@ class AdMobService {
         error: GestureDetector(
           onTap: () {
             adController.reloadAd();
-            print("reloading");
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -61,12 +57,12 @@ class AdMobService {
             ],
           ),
         ),
-        loading: Center(child: CircularProgressIndicator()),
+        loading: const Center(child: const CircularProgressIndicator()),
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: goldTitleColor,//Colors.grey[700],
+          color: AppColors.gold,
         ),
       ),
     );

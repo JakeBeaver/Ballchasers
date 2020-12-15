@@ -21,15 +21,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PlayersData()),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           backgroundColor: Colors.black,
-          textTheme: TextTheme(
-            subtitle1: TextStyle(color: Colors.white),
-            caption: TextStyle(color: Colors.white),
-            bodyText2: TextStyle(color: Colors.white),
-            bodyText1: TextStyle(color: Colors.white),
+          textTheme: const TextTheme(
+            subtitle1: const TextStyle(color: Colors.white),
+            caption: const TextStyle(color: Colors.white),
+            bodyText2: const TextStyle(color: Colors.white),
+            bodyText1: const TextStyle(color: Colors.white),
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),

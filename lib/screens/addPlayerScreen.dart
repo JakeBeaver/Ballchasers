@@ -31,10 +31,10 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Color(0xff001538),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text("Add New Player"),
-        backgroundColor: appBarColor,
+        backgroundColor: AppColors.appBar,
       ),
       body: finding
           ? Center(child: CircularProgressIndicator())
@@ -71,7 +71,7 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
                       TextField(
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                          fillColor: Color(0xff041d59),
+                          fillColor: AppColors.appBar,
                           filled: true,
                         ),
                         controller: nameController,
@@ -115,7 +115,7 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
 
   RaisedButton getPlatformButton(String name, Platform platform) {
     return RaisedButton(
-      color: this.currentPlatform == platform ? Colors.blue[700] : Colors.blueGrey[800],
+      color: this.currentPlatform == platform ?  AppColors.deepBlue : Colors.blueGrey[800],
       textColor: Colors.white,
       child: Text(name),
       onPressed: () => setPlatform(platform),

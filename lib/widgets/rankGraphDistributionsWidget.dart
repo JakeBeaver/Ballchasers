@@ -112,7 +112,7 @@ class RankGraphDistributions extends StatelessWidget {
                           fitInsideHorizontally: true,
                           // fitInsideVertically: true,
                           maxContentWidth: 200,
-                          tooltipBgColor: Color(0xbb041d59),
+                          tooltipBgColor: AppColors.tooltipbackground,
                           tooltipRoundedRadius: 20,
                           getTooltipItem: (
                             BarChartGroupData group,

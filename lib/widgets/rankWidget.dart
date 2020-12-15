@@ -18,7 +18,7 @@ class RankWidget extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: Colors.grey[800], width: 1)),
-      margin: EdgeInsets.all(3),
+      margin: const EdgeInsets.all(3),
       child: ListTile(
         isThreeLine: true,
         dense: true,
@@ -26,10 +26,11 @@ class RankWidget extends StatelessWidget {
             {Navigator.of(context).pushNamed("rank", arguments: rank.name)},
         title: blueTitle(rank.name, sizeAdjust: 2),
         leading: Hero(
-            tag: "icon_" + rank.name,
-            child: CachedNetworkImage(
-                placeholder: (c, a) => CircularProgressIndicator(),
-                imageUrl: rank.tierIcon)),
+          tag: "icon_" + rank.name,
+          child: CachedNetworkImage(
+              placeholder: (c, a) => CircularProgressIndicator(),
+              imageUrl: rank.tierIcon),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -37,7 +38,8 @@ class RankWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 whiteTitle("" + rank.mmr.toString()),
-                if (rank.tierName != "Unranked" || rank.tierName == "Supersonic Legend")
+                if (rank.tierName != "Unranked" ||
+                    rank.tierName == "Supersonic Legend")
                   Text(" • " + rank.tierName + " " + rank.divisionName)
                 else
                   Text(" • " + rank.tierName),
@@ -67,18 +69,18 @@ class RankWidget extends StatelessWidget {
                 children: <Widget>[
                   if (rank.divUp != null)
                     Row(children: [
-                      Icon(Icons.arrow_drop_up, color: Colors.green),
+                      const Icon(Icons.arrow_drop_up, color: Colors.green),
                       Text(
                         rank.divUp.toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       )
                     ]),
                   if (rank.divDown != null)
                     Row(children: [
-                      Icon(Icons.arrow_drop_down, color: Colors.red),
+                      const Icon(Icons.arrow_drop_down, color: Colors.red),
                       Text(
                         rank.divDown.toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       )
                     ]),
                 ],

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:RLRank/methods/graphMethods.dart';
 import 'package:RLRank/providers/trackerData.dart';
+import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -56,7 +57,7 @@ class RankGraphLineChart extends StatelessWidget {
             fitInsideHorizontally: true,
             fitInsideVertically: true,
             maxContentWidth: 200,
-            tooltipBgColor: Color(0xbb041d59),
+            tooltipBgColor: AppColors.tooltipbackground,
             tooltipRoundedRadius: 20,
             getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
               return lineBarsSpot.map((lineBarSpot) {

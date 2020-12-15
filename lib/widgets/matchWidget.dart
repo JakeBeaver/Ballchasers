@@ -105,10 +105,9 @@ class MatchWidget extends StatelessWidget {
 
     Widget matchListTile({Widget leading, Widget title, Widget subtitle}) {
     return Container(
-      // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
       width: 170,
       child: ListTile(
-        contentPadding: EdgeInsets.all(0),
+        contentPadding: const EdgeInsets.all(0),
         dense: true,
         leading: leading,
         title: title,
@@ -121,7 +120,7 @@ class MatchWidget extends StatelessWidget {
     if (gain == null) {
       return Padding(
         padding: const EdgeInsets.only(left: 4.0),
-        child: Icon(Icons.star, color: Color(0xffcbb765)),
+        child: const Icon(Icons.star, color: AppColors.gold),
       );
     }
     bool up = gain > 0;
@@ -129,7 +128,7 @@ class MatchWidget extends StatelessWidget {
     if (!up) gain = -gain;
     return Row(
       children: <Widget>[
-        SizedBox(width: 4),
+        const SizedBox(width: 4),
         Text(
           gain.toString(),
           style: TextStyle(
