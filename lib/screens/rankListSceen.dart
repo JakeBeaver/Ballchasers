@@ -183,7 +183,7 @@ class _RankListScreenState extends State<RankListScreen> {
             children: [
               Container(
                   height: 100,
-                  child: Image.asset('assets/octane_drawing_adaptive.png')),
+                  child: Image.asset('assets/rl_temp_logo.png')),
               SizedBox(height: 20),
               Row(
                 children: [
