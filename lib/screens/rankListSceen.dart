@@ -40,7 +40,7 @@ class _RankListScreenState extends State<RankListScreen> {
           ),
       // if ((prov.sessions?.length ?? 0) > 0)
       //   SizedBox(height: 20),
-      AdMobService.nativeAd("rank list screen ad"),
+      AdMobService.nativeAd(context, "rank list screen ad"),
       if ((prov.sessions?.length ?? 0) > 0)
         ...SessionWidget(prov.sessions[0]).getChildren(),
 
@@ -74,13 +74,17 @@ class _RankListScreenState extends State<RankListScreen> {
           appBar: AppBar(
             actions: <Widget>[
               IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () => Navigator.of(context).pushNamed("about"),
+              ),
+              IconButton(
                 icon: Icon(Icons.help_outline),
                 onPressed: () {
                   setState(() {
                     helping = true;
                   });
                 },
-              )
+              ),
             ],
             title: Text(prov.player?.handle ?? prov.player?.name ?? ""),
             leading: prov.player?.picUrl == null
@@ -182,8 +186,9 @@ class _RankListScreenState extends State<RankListScreen> {
           child: Column(
             children: [
               Container(
-                  height: 100,
-                  child: Image.asset('assets/rl_temp_logo.png')),
+                  height: 150,
+                  child: Image.asset(
+                      'assets/BallChasersLogo_transparentBackground.png')),
               SizedBox(height: 20),
               Row(
                 children: [

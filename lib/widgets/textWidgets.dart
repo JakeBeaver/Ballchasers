@@ -7,7 +7,7 @@ class AppColors {
   static const Color helpText = gold;//const Color(0xffab9745);
   static const Color button = const Color(0xff123280);
   static const Color appBar = const Color(0xff041d59);
-  static const Color tooltipbackground = const Color(0xbb041d59); // appbar + opacity
+  static const Color tooltipbackground = const Color(0xbb041d59); // appbar opacity
   static const Color background = const Color(0xff001538);
   static const Color purple = const Color(0xff4c138e);
   static const Color lossStreak = const Color(0xff2b9fea);

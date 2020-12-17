@@ -29,10 +29,13 @@ class _SessionsScreenState extends State<SessionsScreen> {
           count += (session.matches.length + 1);
           if (count > 10) {
             count = 0;
-            children.add(AdMobService.nativeAd(
-              "ad after session ${listAdId++}",
-              full: true,
-            ));
+            children.add(
+              AdMobService.nativeAd(
+                context,
+                "ad after session ${listAdId++}",
+                full: true,
+              ),
+            );
           }
         }
       }

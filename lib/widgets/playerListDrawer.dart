@@ -17,14 +17,16 @@ class PlayerListDrawer extends StatelessWidget {
     var mq = MediaQuery.of(context);
     return Drawer(
       child: Container(
-        color: AppColors.appBar,
+        color: AppColors.background,
         child: ListView(
           children: [
             SizedBox(height: mq.viewInsets.top),
             Container(
               height: 50,
               child: RaisedButton(
-                color: Colors.grey[100],
+                // textColor: Colors.black,
+                // color: Colors.grey[100],
+                color: AppColors.button,
                 onPressed: () {
                   if (Navigator.of(context).canPop()) {
                     Navigator.of(context).pop();

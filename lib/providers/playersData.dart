@@ -63,11 +63,10 @@ class PlayersData with ChangeNotifier {
   Future _loadData() async {
     final file = await _localFile;
 
-    if (!await file.exists()) {
-      return;
-    }
-    // Read the file.
+    if (!await file.exists()) return;
+
     String contents = await file.readAsString();
+    if (contents.isEmpty) return;
     var list = json.decode(contents) as List<dynamic>;
     _data = list.map((x) => Player.fromJson(x)).toList();
   }

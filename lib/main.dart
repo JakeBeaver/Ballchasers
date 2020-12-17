@@ -4,6 +4,8 @@ import 'package:RLRank/screens/addPlayerScreen.dart';
 import 'package:RLRank/screens/rankListSceen.dart';
 import 'package:RLRank/screens/rankScreen.dart';
 import 'package:RLRank/screens/sessionsScreen.dart';
+import 'package:RLRank/screens/aboutScreen.dart';
+import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,13 +25,27 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(
           primarySwatch: Colors.blue,
-          backgroundColor: Colors.black,
+          backgroundColor: AppColors.background,
+          appBarTheme: AppBarTheme(color: AppColors.appBar),
+          scaffoldBackgroundColor: AppColors.background,
+          dialogBackgroundColor: AppColors.background,
+          cardColor: AppColors.background,
+          colorScheme: ColorScheme.dark(),
+          accentColor: AppColors.deepBlue,
           textTheme: const TextTheme(
-            subtitle1: const TextStyle(color: Colors.white),
-            caption: const TextStyle(color: Colors.white),
-            bodyText2: const TextStyle(color: Colors.white),
-            bodyText1: const TextStyle(color: Colors.white),
-          ),
+              // subtitle1: const TextStyle(color: Colors.white),
+              // sub
+              // caption: const TextStyle(color: Colors.white),
+              // bodyText2: const TextStyle(color: Colors.white),
+              // bodyText1: const TextStyle(color: Colors.white),
+              // subtitle2: const TextStyle(color: Colors.white),
+              // headline1: const TextStyle(color: Colors.white),
+              // headline2:  const TextStyle(color: Colors.white),
+              // headline3:  const TextStyle(color: Colors.white),
+              // headline4:  const TextStyle(color: Colors.white),
+              // headline5:  const TextStyle(color: Colors.white),
+              // headline6:  const TextStyle(color: Colors.white),
+              ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: MyHomePage(),
@@ -37,6 +53,7 @@ class MyApp extends StatelessWidget {
           "rank": (c) => RankScreen(),
           "newPlayer": (c) => AddPlayerScreen(),
           "sessions": (c) => SessionsScreen(),
+          "about": (c) => AboutScreen(),
         },
       ),
     );
@@ -49,7 +66,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<PlayersData>(context);
