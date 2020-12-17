@@ -1,3 +1,4 @@
+import 'package:RLRank/providers/adMobService.dart';
 import 'package:RLRank/providers/playersData.dart';
 import 'package:RLRank/providers/trackerData.dart';
 import 'package:RLRank/screens/addPlayerScreen.dart';
@@ -6,6 +7,7 @@ import 'package:RLRank/screens/rankScreen.dart';
 import 'package:RLRank/screens/sessionsScreen.dart';
 import 'package:RLRank/screens/aboutScreen.dart';
 import 'package:RLRank/widgets/textWidgets.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,10 +15,17 @@ void main() {
   runApp(MyApp());
 }
 
+Future setAnalytics(BuildContext context) async {
+  await FirebaseAnalytics().setAnalyticsCollectionEnabled(
+    await AdMobService.getHasConsent(context),
+  );
+}
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    setAnalytics(context);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TrackerData()),

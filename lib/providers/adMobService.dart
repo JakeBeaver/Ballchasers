@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:RLRank/widgets/textWidgets.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/flutter_native_admob.dart';
@@ -46,6 +47,7 @@ class AdMobService {
         builder: (ctx) => WillPopScope(
           onWillPop: () async => false,
           child: Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: SingleChildScrollView(
@@ -62,28 +64,37 @@ class AdMobService {
                     ),
                     SizedBox(height: 20),
                     Text(
-                      "We keep this app free by showing you ads.",
+                      "We keep this app free by showing you ads, and alive by analyzing crashes.",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 12),
+                      style: TextStyle(fontSize: 11),
                     ),
                     SizedBox(height: 20),
                     Text(
-                      "Can we continue to use your data to tailor ads for you?",
+                      "Can we use your data fo ad personalization and crash analysis?",
                       style: TextStyle(fontSize: 20),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 20),
                     Text(
-                      "You can change your choice anytime for this anytime in settings (cog icon) under consents. Our partners will collect your data and use a unique identifier on your device to show you relevant ads. This choice wont decrease the number of ads.",
+                      "You can change your choice anytime for this anytime in settings (cog icon) under consents. Our partners will collect your data and use a unique identifier on your device to show you relevant ads and analyze app performance. This choice wont decrease the number of ads.",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 12),
+                      style: TextStyle(fontSize: 11),
                     ),
                     FlatButton(
-                      onPressed: () =>
-                          launch("https://safety.google/privacy/ads-and-data/"),
-                      child: deepBlueTitle("Learn more", sizeAdjust: -2),
+                      height: 10,
+                      onPressed: () => launch(
+                          "https://safety.google/privacy/ads-and-data/"),
+                      child:
+                          deepBlueTitle("Learn more (AdMob)", sizeAdjust: -2),
                     ),
-                    SizedBox(height: 20),
+                    FlatButton(
+                      height: 10,
+                      onPressed: () => launch(
+                          "https://firebase.google.com/terms/data-processing-terms"),
+                      child: deepBlueTitle("Learn more (Firebase Analytics)",
+                          sizeAdjust: -2),
+                    ),
+                    // SizedBox(height: 20),
                     Container(
                       width: double.infinity,
                       margin: EdgeInsets.all(10),
@@ -91,7 +102,7 @@ class AdMobService {
                         padding: EdgeInsets.all(20),
                         color: AppColors.button,
                         child: Text(
-                          "Yes, continue to see relevant ads",
+                          "Yes",
                           textAlign: TextAlign.center,
                         ),
                         onPressed: () => Navigator.of(context).pop(true),
@@ -104,7 +115,7 @@ class AdMobService {
                         color: AppColors.button,
                         padding: EdgeInsets.all(20),
                         child: Text(
-                          "No, see ads that are less relevant",
+                          "No",
                           textAlign: TextAlign.center,
                         ),
                         onPressed: () => Navigator.of(context).pop(false),
@@ -119,11 +130,15 @@ class AdMobService {
         ),
       );
       bool consent = await _consentFuture;
+
       prefs.setBool(adConsentKey, consent);
       _nativeAdControllers.forEach((key, value) {
         value.setNonPersonalizedAds(!consent);
         value.reloadAd(forceRefresh: true);
       });
+
+      await FirebaseAnalytics().setAnalyticsCollectionEnabled(consent);
+
       _consentFuture = null;
     } else {
       await _consentFuture;
