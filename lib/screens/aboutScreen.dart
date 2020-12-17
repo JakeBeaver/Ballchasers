@@ -9,40 +9,47 @@ class AboutScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text("About"),
+        title: Text("Settings"),
         backgroundColor: AppColors.appBar,
       ),
       body: FutureBuilder(
         future: AdMobService.getIsGDPR(),
         builder: (context, snapshot) {
           bool isGDPR = snapshot.hasData && snapshot.data;
-          return ListView(
-            children: [
-              SizedBox(height: 20),
-              Text(
-                "Ballchasers",
-                style: TextStyle(fontSize: 40),
-                textAlign: TextAlign.center,
+          return Center(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  whiteTitle(
+                    "Ballchasers",
+                    sizeAdjust: 17,
+                    textAlign: TextAlign.center,
+                  ),
+                  icon,
+                  LocalButton(
+                    Icons.library_books,
+                    "Licenses",
+                    onPressed: () async {
+                      var info = await PackageInfo.fromPlatform();
+                      showLicensePage(
+                        context: context,
+                        applicationIcon: icon,
+                        applicationVersion:
+                            "version ${info.version} build ${info.buildNumber}",
+                        applicationName: "Ballchasers",
+                      );
+                    },
+                  ),
+                  // if (isGDPR) SizedBox(height: 10),
+                  if (isGDPR)
+                    LocalButton(
+                      Icons.check,
+                      "Consent",
+                      onPressed: () => AdMobService.promptForConsent(context),
+                    ),
+                ],
               ),
-              icon,
-              LocalButton(
-                "Licenses",
-                onPressed: () async {
-                  var info = await PackageInfo.fromPlatform();
-                  showLicensePage(
-                    context: context,
-                    applicationVersion:
-                        "version ${info.version} build ${info.buildNumber}",
-                    applicationName: "Ballchasers",
-                  );
-                },
-              ),
-              if (isGDPR)
-                LocalButton(
-                  "Consents",
-                  onPressed: () => AdMobService.promptForConsent(context),
-                ),
-            ],
+            ),
           );
         },
       ),
@@ -57,17 +64,25 @@ class AboutScreen extends StatelessWidget {
 
 class LocalButton extends StatelessWidget {
   final String text;
+  final IconData icon;
   final void Function() onPressed;
-  LocalButton(this.text, {this.onPressed});
+  LocalButton(this.icon, this.text, {this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.all(10),
       height: 50,
       child: RaisedButton(
         color: AppColors.button,
-        child: Text(text),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white),
+            SizedBox(width: 10),
+            Text(text),
+          ],
+        ),
         onPressed: onPressed,
       ),
     );
