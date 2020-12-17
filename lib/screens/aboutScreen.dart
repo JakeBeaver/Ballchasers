@@ -1,3 +1,4 @@
+import 'package:RLRank/providers/adMobService.dart';
 import 'package:RLRank/widgets/textWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
@@ -11,31 +12,39 @@ class AboutScreen extends StatelessWidget {
         title: Text("About"),
         backgroundColor: AppColors.appBar,
       ),
-      body: ListView(
-        children: [
-          SizedBox(height: 20),
-          Text(
-            "Ballchasers",
-            style: TextStyle(fontSize: 40),
-            textAlign: TextAlign.center,
-          ),
-          icon,
-          LocalButton(
-            "Consents",
-          ),
-          LocalButton(
-            "Licenses",
-            onPressed: () async {
-              var info = await PackageInfo.fromPlatform();
-              showLicensePage(
-                context: context,
-                applicationVersion:
-                    "version ${info.version} build ${info.buildNumber}",
-                applicationName: "Ballchasers",
-              );
-            },
-          )
-        ],
+      body: FutureBuilder(
+        future: AdMobService.getIsGDPR(),
+        builder: (context, snapshot) {
+          bool isGDPR = snapshot.hasData && snapshot.data;
+          return ListView(
+            children: [
+              SizedBox(height: 20),
+              Text(
+                "Ballchasers",
+                style: TextStyle(fontSize: 40),
+                textAlign: TextAlign.center,
+              ),
+              icon,
+              LocalButton(
+                "Licenses",
+                onPressed: () async {
+                  var info = await PackageInfo.fromPlatform();
+                  showLicensePage(
+                    context: context,
+                    applicationVersion:
+                        "version ${info.version} build ${info.buildNumber}",
+                    applicationName: "Ballchasers",
+                  );
+                },
+              ),
+              if (isGDPR)
+                LocalButton(
+                  "Consents",
+                  onPressed: () => AdMobService.promptForConsent(context),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
