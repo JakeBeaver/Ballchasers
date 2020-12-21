@@ -33,6 +33,13 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: ThemeData(
+          snackBarTheme: SnackBarThemeData(
+            contentTextStyle: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          cursorColor: AppColors.deepBlue,
+          textSelectionHandleColor: AppColors.deepBlue,
           primarySwatch: Colors.blue,
           backgroundColor: AppColors.background,
           appBarTheme: AppBarTheme(color: AppColors.appBar),
