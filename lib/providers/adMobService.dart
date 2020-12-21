@@ -30,7 +30,7 @@ class AdMobService {
         var parsedResponse = json.decode(response.body) as Map<String, dynamic>;
         _isGDPR = parsedResponse['is_request_in_eea_or_unknown'];
       } catch (ex) {
-        _isGDPR = false;
+        return false;
       }
     }
     return _isGDPR;
