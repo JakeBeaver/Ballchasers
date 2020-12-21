@@ -196,7 +196,7 @@ class TrackerData with ChangeNotifier {
     GlobalKey<ScaffoldState> scaffoldKey,
     String heroTag = "Disconnected Button Hero Tag",
   }) {
-    return offline
+    return offline || heroTag == null
         ? FloatingActionButton(
             heroTag: heroTag,
             elevation: 0,
