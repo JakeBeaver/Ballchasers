@@ -70,13 +70,13 @@ class AdMobService {
                     ),
                     SizedBox(height: 20),
                     Text(
-                      "Can we use your data fo ad personalization and crash analysis?",
+                      "Can we use your data for ad personalization and crash analysis?",
                       style: TextStyle(fontSize: 20),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 20),
                     Text(
-                      "You can change your choice anytime for this anytime in settings (cog icon) under consents. Our partners will collect your data and use a unique identifier on your device to show you relevant ads and analyze app performance. This choice wont decrease the number of ads.",
+                      "You can change your choice anytime in Settings (cog icon) under 'Consent'. Our partners will collect your data and use a unique identifier on your device to show you relevant ads and analyze app performance. This choice won't decrease the number of ads.",
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 11),
                     ),
