@@ -54,7 +54,7 @@ class RankGraphWidget extends StatelessWidget {
                         children: [
                           Provider.of<TrackerData>(context, listen: false)
                               .disconnectedIcon(heroTag: null),
-                          Text("Could not reach tracker"),
+                          Text("Could not reach provider"),
                         ],
                       ),
                     ),

@@ -13,7 +13,8 @@ import 'package:provider/provider.dart';
 
 class TrackerData with ChangeNotifier {
   bool isLoading = true;
-
+  bool _sessionsLoadingError = false;
+  bool get sessionsLoadingError => _sessionsLoadingError && !offline;
   Player player;
 
   Player previousPlayer;
@@ -159,10 +160,11 @@ class TrackerData with ChangeNotifier {
       var overviewMap = segments.firstWhere((x) => x["type"] == "overview");
       seasonReward = SeasonReward(overviewMap);
 
+      var name = _statsBody["data"]["platformInfo"]["platformUserIdentifier"];
       var handle = _statsBody["data"]["platformInfo"]["platformUserHandle"];
       var avatarUrl = _statsBody["data"]["platformInfo"]["avatarUrl"];
       this.player = Player(
-        name: player.name,
+        name: name,
         handle: handle,
         platform: player.platform,
         picUrl: avatarUrl,
@@ -174,6 +176,7 @@ class TrackerData with ChangeNotifier {
 
   Future fetchSessions() async {
     try {
+      this._sessionsLoadingError = false;
       String address =
           getSessionsAddress(player.platform, player.nameForSearch);
       final response = await http.get(address);
@@ -183,6 +186,9 @@ class TrackerData with ChangeNotifier {
       } else {
         throw new Exception();
       }
+    } catch (ex) {
+      this._sessionsLoadingError = true;
+      
     } finally {
       var items = _sessionsBody["data"]["items"] as List<dynamic>;
       sessions = items
@@ -211,7 +217,7 @@ class TrackerData with ChangeNotifier {
                       SnackBar(
                         backgroundColor: Colors.red[800],
                         content: Text(
-                          "Loading from tracker server failed. Showing cached info.",
+                          "Loading from provider failed. Showing cached info.",
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -222,7 +228,7 @@ class TrackerData with ChangeNotifier {
   }
 }
 
-class SeasonReward { 
+class SeasonReward {
   String picUrl;
   String rank;
   double percentile;

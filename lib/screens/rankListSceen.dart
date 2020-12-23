@@ -41,8 +41,12 @@ class _RankListScreenState extends State<RankListScreen> {
       // if ((prov.sessions?.length ?? 0) > 0)
       //   SizedBox(height: 20),
       AdMobService.nativeAd(context, "rank list screen ad"),
+      if (prov.sessionsLoadingError)
+        if (!prov.offline)
+          redTitle("Provider error\nShowing cached sessions"),
       if ((prov.sessions?.length ?? 0) > 0)
-        ...SessionWidget(prov.sessions[0]).getChildren(),
+        ...SessionWidget(prov.sessions[0], prov.sessionsLoadingError)
+            .getChildren(),
 
       // ...prov.sessions
       //     .map((session) => SessionWidget(session))
@@ -195,7 +199,7 @@ class _RankListScreenState extends State<RankListScreen> {
                   CircularProgressIndicator(),
                   SizedBox(width: 20),
                   Text(
-                    "Fetching tracker data...",
+                    "Fetching provider data...",
                     style: TextStyle(
                       fontSize: 16,
                     ),

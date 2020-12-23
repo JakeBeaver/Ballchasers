@@ -98,13 +98,14 @@ class Player {
   }
 
   String get nameForSearch {
-    if (name.toLowerCase().contains("steamcommunity.com/profiles/")) {
+    var lowerCaseName = name.toLowerCase();
+    if (lowerCaseName.contains("steamcommunity.com/profiles/")) {
       return name
           .toLowerCase()
           .split("steamcommunity.com/profiles/")[1]
           .split("/")[0];
     }
-    return name;
+    return lowerCaseName;
   }
 
   Map<String, dynamic> toJson() => {

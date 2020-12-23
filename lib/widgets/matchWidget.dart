@@ -6,7 +6,8 @@ import 'package:intl/intl.dart';
 
 class MatchWidget extends StatelessWidget {
   final Match match;
-  MatchWidget(this.match);
+  final bool offline;
+  MatchWidget(this.match, this.offline);
 
   final tf = DateFormat('HH:mm');
   @override
@@ -17,7 +18,7 @@ class MatchWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: Colors.grey[700],
+          color: offline? Colors.red[800] : Colors.grey[700],
         ),
       ),
       width: double.infinity,

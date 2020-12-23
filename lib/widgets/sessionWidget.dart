@@ -7,11 +7,12 @@ import 'matchWidget.dart';
 
 class SessionWidget extends StatelessWidget {
   final Session session;
-  SessionWidget(this.session);
+  final bool offline;
+  SessionWidget(this.session, this.offline);
 
   List<Widget> getChildren() => [
-        SessionHeader(session),
-        ...session.matches.map((x) => MatchWidget(x)).toList(),
+        SessionHeader(session, offline),
+        ...session.matches.map((x) => MatchWidget(x, offline)).toList(),
       ];
 
   @override
@@ -23,7 +24,8 @@ class SessionWidget extends StatelessWidget {
 }
 
 class SessionHeader extends StatelessWidget {
-  const SessionHeader(this.session);
+  const SessionHeader(this.session, this.offline);
+  final bool offline;
   final Session session;
 
   @override
@@ -47,7 +49,9 @@ class SessionHeader extends StatelessWidget {
         margin: const EdgeInsets.only(top: 10, bottom: 5),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: const [AppColors.purple, AppColors.deepBlue],
+            colors: offline
+                ? [Colors.red[800], AppColors.purple]
+                : const [AppColors.purple, AppColors.deepBlue],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

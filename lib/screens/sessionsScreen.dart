@@ -25,7 +25,8 @@ class _SessionsScreenState extends State<SessionsScreen> {
         int listAdId = 0;
 
         for (var session in prov.sessions) {
-          children.addAll(SessionWidget(session).getChildren());
+          children.addAll(
+              SessionWidget(session, prov.sessionsLoadingError).getChildren());
           count += (session.matches.length + 1);
           if (count > 10) {
             count = 0;
@@ -40,6 +41,7 @@ class _SessionsScreenState extends State<SessionsScreen> {
         }
       }
     }
+    bool offline = prov.sessionsLoadingError;
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: AppColors.background,
@@ -49,8 +51,10 @@ class _SessionsScreenState extends State<SessionsScreen> {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              title: const Text("Sessions"),
-              backgroundColor: AppColors.appBar,
+              title: offline
+                  ? const Text("Sessions (provider error)")
+                  : const Text("Sessions"),
+              backgroundColor: offline ? Colors.red[900] : AppColors.appBar,
               floating: true,
             ),
             SliverList(
