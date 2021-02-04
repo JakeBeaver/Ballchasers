@@ -106,6 +106,12 @@ class Player {
           .split("steamcommunity.com/profiles/")[1]
           .split("/")[0];
     }
+    if (lowerCaseName.contains("steamcommunity.com/id/")) {
+      return name
+          .toLowerCase()
+          .split("steamcommunity.com/id/")[1]
+          .split("/")[0];
+    }
     return lowerCaseName;
   }
 
