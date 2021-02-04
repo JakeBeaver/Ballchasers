@@ -58,6 +58,7 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
                           getPlatformButton("PSN", Platform.psn),
                           getPlatformButton("Xbox", Platform.xbox),
                           getPlatformButton("Steam", Platform.steam),
+                          getPlatformButton("Epic", Platform.epic),
                         ],
                       ),
                       SizedBox(height: 20),
@@ -130,6 +131,8 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
         return "Provide Xbox Live Account Name";
       case Platform.steam:
         return "Provide Steam ID or SteamCommunity.com profile url";
+      case Platform.epic:
+        return "Provide Epic Account Name";
       default:
         return "";
     }

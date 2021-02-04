@@ -58,9 +58,12 @@ class PlayerListDrawer extends StatelessWidget {
                   child: ListTile(
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: CachedNetworkImage(
-                            placeholder: (c, a) => CircularProgressIndicator(),
-                            imageUrl: player.picUrl),
+                        child: player.picUrl == null
+                            ? player.defaultProfileIcon
+                            : CachedNetworkImage(
+                                placeholder: (c, a) =>
+                                    CircularProgressIndicator(),
+                                imageUrl: player.picUrl),
                       ),
                       title: Text(player.handle),
                       trailing: IconButton(

@@ -42,8 +42,7 @@ class _RankListScreenState extends State<RankListScreen> {
       //   SizedBox(height: 20),
       AdMobService.nativeAd(context, "rank list screen ad"),
       if (prov.sessionsLoadingError)
-        if (!prov.offline)
-          redTitle("Provider error\nShowing cached sessions"),
+        if (!prov.offline) redTitle("Provider error\nShowing cached sessions"),
       if ((prov.sessions?.length ?? 0) > 0)
         ...SessionWidget(prov.sessions[0], prov.sessionsLoadingError)
             .getChildren(),
@@ -91,13 +90,16 @@ class _RankListScreenState extends State<RankListScreen> {
               ),
             ],
             title: Text(prov.player?.handle ?? prov.player?.name ?? ""),
-            leading: prov.player?.picUrl == null
+            leading: prov.player == null
                 ? const CircularProgressIndicator()
                 : GestureDetector(
                     child: ClipOval(
-                      child: CachedNetworkImage(
-                          placeholder: (c, a) => CircularProgressIndicator(),
-                          imageUrl: prov.player.picUrl),
+                      child: prov.player.picUrl == null
+                          ? prov.player.defaultProfileIcon
+                          : CachedNetworkImage(
+                              placeholder: (c, a) =>
+                                  CircularProgressIndicator(),
+                              imageUrl: prov.player.picUrl),
                     ),
                     onTap: prov.isLoading
                         ? null

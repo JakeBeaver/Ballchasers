@@ -88,6 +88,8 @@ class TrackerData with ChangeNotifier {
         return "xbl";
       case Platform.steam:
         return "steam";
+      case Platform.epic:
+        return "epic";
     }
     return "error";
   }
@@ -188,7 +190,7 @@ class TrackerData with ChangeNotifier {
       }
     } catch (ex) {
       this._sessionsLoadingError = true;
-      
+
     } finally {
       var items = _sessionsBody["data"]["items"] as List<dynamic>;
       sessions = items

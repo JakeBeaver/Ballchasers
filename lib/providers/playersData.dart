@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 class PlayersData with ChangeNotifier {
@@ -72,9 +72,10 @@ class PlayersData with ChangeNotifier {
   }
 }
 
-enum Platform { psn, xbox, steam }
+enum Platform { psn, xbox, steam, epic }
 
 class Player {
+  final Widget defaultProfileIcon = const Icon(Icons.person, size: 56);
   final String handle;
   final String name;
   final String picUrl;
