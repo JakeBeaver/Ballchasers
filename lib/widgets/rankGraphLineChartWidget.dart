@@ -27,7 +27,7 @@ class RankGraphLineChart extends StatelessWidget {
     double maxY = tierDatas.isEmpty || maxDataPoint > tierDatas.last.minMMR
         ? maxDataPoint
         : min(maxDataPoint * 1.2, tierDatas.last.minMMR.toDouble());
-    if (interval == 0) interval = msPerDay;
+    // if (interval == 0) interval = msPerDay;
 
     List<TierData> tierDatasAggregated = [];
     for (TierData tier in tierDatas) {
@@ -118,26 +118,27 @@ class RankGraphLineChart extends StatelessWidget {
           show: true,
           border: Border.all(color: Colors.white.withOpacity(0.5)),
         ),
-        gridData: FlGridData(
-          drawVerticalLine: true,
-          verticalInterval: interval,
-          getDrawingVerticalLine: (val) => FlLine(
-            strokeWidth: 0.25,
-            color: Colors.white.withOpacity(0.5),
-          ),
-          drawHorizontalLine: false,
-          // horizontalInterval: 1,
-          // getDrawingHorizontalLine: (val) => FlLine(
-          //   strokeWidth: 0, //(maxY - minY) / 90,
-          //   // strokeWidth:
-          //   //     getTier(tierDatas, val.toInt())?.division ==
-          //   //             "Division I"
-          //   //         ? 1
-          //   //         : 0.25,
-          //   color: addOpacity(
-          //       getSplitColor(tierDatas, val.toInt()), 0.3),
-          // ),
-        ),
+        gridData: 
+             FlGridData(
+                drawVerticalLine: interval > 0,
+                verticalInterval: interval > 0 ? interval : msPerDay,
+                getDrawingVerticalLine: (val) =>  FlLine(
+                  strokeWidth: 0.25,
+                  color: Colors.white.withOpacity(0.5),
+                ),
+                drawHorizontalLine: false,
+                // horizontalInterval: 1,
+                // getDrawingHorizontalLine: (val) => FlLine(
+                //   strokeWidth: 0, //(maxY - minY) / 90,
+                //   // strokeWidth:
+                //   //     getTier(tierDatas, val.toInt())?.division ==
+                //   //             "Division I"
+                //   //         ? 1
+                //   //         : 0.25,
+                //   color: addOpacity(
+                //       getSplitColor(tierDatas, val.toInt()), 0.3),
+                // ),
+              ),
         minY: minY,
         maxY: maxY,
         titlesData: FlTitlesData(
@@ -145,22 +146,22 @@ class RankGraphLineChart extends StatelessWidget {
             showTitles: false,
           ),
           bottomTitles: SideTitles(
-              interval: interval,
-              margin: 10,
-              showTitles: true,
-              rotateAngle: 45,
-              reservedSize: 20,
-              getTextStyles: (value) => const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 8,
-                  ),
-              getTitles: (value) {
-                final tf = DateFormat("d MMM ''yy");
-                var dt = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+                  interval: interval > 0 ? interval : msPerDay,
+                  margin: 10,
+                  showTitles: interval > 0,//true,
+                  rotateAngle: 45,
+                  reservedSize: 20,
+                  getTextStyles: (value) => const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 8,
+                      ),
+                  getTitles: (value) {
+                    final tf = DateFormat("d MMM ''yy");
+                    var dt = DateTime.fromMillisecondsSinceEpoch(value.toInt());
 
-                return tf.format(dt);
-              }),
+                    return tf.format(dt);
+                  }),
         ),
       ),
     );

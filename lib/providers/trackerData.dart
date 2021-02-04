@@ -296,13 +296,16 @@ class Match {
     assists = map["stats"]["assists"]["value"];
     shots = map["stats"]["shots"]["value"];
     mvps = map["stats"]["mvps"]["value"];
-    iconUrl = map["stats"]["rating"]["metadata"]["iconUrl"];
-    tier = map["stats"]["rating"]["metadata"]["tier"];
-    division = map["stats"]["rating"]["metadata"]["division"];
-    ratingDelta = map["stats"]["rating"]["metadata"]["ratingDelta"];
-    mmr = map["stats"]["rating"]["value"];
-    matches = map["stats"]["matchesPlayed"]["value"];
-    wins = map["stats"]["wins"]["value"];
+
+    if (map["stats"]["rating"] != null) {
+      iconUrl = map["stats"]["rating"]["metadata"]["iconUrl"];
+      tier = map["stats"]["rating"]["metadata"]["tier"];
+      division = map["stats"]["rating"]["metadata"]["division"];
+      ratingDelta = map["stats"]["rating"]["metadata"]["ratingDelta"];
+      mmr = map["stats"]["rating"]["value"];
+    }
+    matches = map["stats"]["matchesPlayed"]["value"]??1;
+    wins = map["stats"]["wins"]["value"]??0;
 
     result = capitalize(result.replaceAll("victory", "win"));
 

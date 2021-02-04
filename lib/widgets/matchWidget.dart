@@ -18,7 +18,7 @@ class MatchWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: offline? Colors.red[800] : Colors.grey[700],
+          color: offline ? Colors.red[800] : Colors.grey[700],
         ),
       ),
       width: double.infinity,
@@ -53,17 +53,20 @@ class MatchWidget extends StatelessWidget {
                 subtitle: blueTitle(match.playlist),
               ),
               matchListTile(
-                leading: CachedNetworkImage(
-                  placeholder: (c, a) => CircularProgressIndicator(),
-                  imageUrl: match.iconUrl,
-                ),
+                leading: match.iconUrl == null
+                    ? null
+                    : CachedNetworkImage(
+                        placeholder: (c, a) => CircularProgressIndicator(),
+                        imageUrl: match.iconUrl,
+                      ),
                 title: Row(
                   children: <Widget>[
-                    whiteTitle(match.mmr.toString()),
-                    gainWidget(match.ratingDelta),
+                    if (match.mmr != null) whiteTitle(match.mmr.toString()),
+                    if (match.mmr != null) gainWidget(match.ratingDelta),
                   ],
                 ),
-                subtitle: blueTitle(match.division),
+                subtitle:
+                    match.division == null ? null : blueTitle(match.division),
               ),
               matchListTile(
                 title: blueTitle("Goals / Shots"),
@@ -104,7 +107,7 @@ class MatchWidget extends StatelessWidget {
     );
   }
 
-    Widget matchListTile({Widget leading, Widget title, Widget subtitle}) {
+  Widget matchListTile({Widget leading, Widget title, Widget subtitle}) {
     return Container(
       width: 170,
       child: ListTile(
