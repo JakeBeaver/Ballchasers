@@ -58,11 +58,20 @@ android {
            storePassword keystoreProperties['storePassword']
        }
    }
-   buildTypes {
-       release {
-           signingConfig signingConfigs.release
-       }
-   }
+   
+
+   defaultConfig { 
+        resValue "string", "app_name", "Ballchasers"
+    }
+    buildTypes {
+        debug {
+            resValue "string", "app_name", "_ballchasers"
+            applicationIdSuffix = ".debug"
+        }
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
 }
 
 flutter {
