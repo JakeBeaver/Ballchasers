@@ -40,7 +40,7 @@ class SessionHeader extends StatelessWidget {
     final String date = df.format(timeStamp);
     final String matches = nOfMatches == 1 ? "Match" : "Matches";
     final String wins = nOfWins == 1 ? "Win" : " Wins";
-    final String winPerc = "${(nOfWins / nOfMatches * 100).round()}%";
+    final String winPerc = nOfMatches == 0 ? "0%" : "${(nOfWins / nOfMatches * 100).round()}%";
     final String title = "$date" +
         "\n$time, $nOfMatches $matches" +
         "\n$nOfWins $wins ($winPerc)";
