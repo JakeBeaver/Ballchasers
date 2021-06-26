@@ -15,9 +15,11 @@ class RankGraphLineChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (chartData.isEmpty) return Text("nope");
-    var days = chartData.length;
-    var daysToShow = 5;
     const double msPerDay = 86400000;
+    var firstDayMs = chartData.first.collectionDateMillisecondsSinceEpoch;
+    var lastDayMs = chartData.last.collectionDateMillisecondsSinceEpoch;
+    var days = (lastDayMs - firstDayMs) / msPerDay; //chartData.length;
+    var daysToShow = 5;
     List<double> ys = (chartData).map((x) => x.spot.y).toList();
     var minDataPoint = ys.reduce(min);
     var maxDataPoint = ys.reduce(max);
@@ -118,27 +120,26 @@ class RankGraphLineChart extends StatelessWidget {
           show: true,
           border: Border.all(color: Colors.white.withOpacity(0.5)),
         ),
-        gridData: 
-             FlGridData(
-                drawVerticalLine: interval > 0,
-                verticalInterval: interval > 0 ? interval : msPerDay,
-                getDrawingVerticalLine: (val) =>  FlLine(
-                  strokeWidth: 0.25,
-                  color: Colors.white.withOpacity(0.5),
-                ),
-                drawHorizontalLine: false,
-                // horizontalInterval: 1,
-                // getDrawingHorizontalLine: (val) => FlLine(
-                //   strokeWidth: 0, //(maxY - minY) / 90,
-                //   // strokeWidth:
-                //   //     getTier(tierDatas, val.toInt())?.division ==
-                //   //             "Division I"
-                //   //         ? 1
-                //   //         : 0.25,
-                //   color: addOpacity(
-                //       getSplitColor(tierDatas, val.toInt()), 0.3),
-                // ),
-              ),
+        gridData: FlGridData(
+          drawVerticalLine: interval > 0,
+          verticalInterval: interval > 0 ? interval : msPerDay,
+          getDrawingVerticalLine: (val) => FlLine(
+            strokeWidth: 0.25,
+            color: Colors.white.withOpacity(0.5),
+          ),
+          drawHorizontalLine: false,
+          // horizontalInterval: 1,
+          // getDrawingHorizontalLine: (val) => FlLine(
+          //   strokeWidth: 0, //(maxY - minY) / 90,
+          //   // strokeWidth:
+          //   //     getTier(tierDatas, val.toInt())?.division ==
+          //   //             "Division I"
+          //   //         ? 1
+          //   //         : 0.25,
+          //   color: addOpacity(
+          //       getSplitColor(tierDatas, val.toInt()), 0.3),
+          // ),
+        ),
         minY: minY,
         maxY: maxY,
         titlesData: FlTitlesData(
@@ -146,22 +147,22 @@ class RankGraphLineChart extends StatelessWidget {
             showTitles: false,
           ),
           bottomTitles: SideTitles(
-                  interval: interval > 0 ? interval : msPerDay,
-                  margin: 10,
-                  showTitles: interval > 0,//true,
-                  rotateAngle: 45,
-                  reservedSize: 20,
-                  getTextStyles: (value) => const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 8,
-                      ),
-                  getTitles: (value) {
-                    final tf = DateFormat("d MMM ''yy");
-                    var dt = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+              interval: interval > 0 ? interval : msPerDay,
+              margin: 10,
+              showTitles: interval > 0, //true,
+              rotateAngle: 45,
+              reservedSize: 20,
+              getTextStyles: (value) => const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 8,
+                  ),
+              getTitles: (value) {
+                final tf = DateFormat("d MMM ''yy");
+                var dt = DateTime.fromMillisecondsSinceEpoch(value.toInt());
 
-                    return tf.format(dt);
-                  }),
+                return tf.format(dt);
+              }),
         ),
       ),
     );
