@@ -77,6 +77,21 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
                         ),
                         controller: nameController,
                       ),
+                      if (currentPlatform == Platform.epic) ...[
+                        SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Text(
+                            "Tracker.Network\ndoes not currently allow\nthird party apps\nto fetch stats from Epic.\n\nSorry for the inconvenience.",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.red,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                       SizedBox(height: 20),
                       RaisedButton(
                         child: Text("Add"),
@@ -116,7 +131,9 @@ class _AddPlayerScreenState extends State<AddPlayerScreen> {
 
   RaisedButton getPlatformButton(String name, Platform platform) {
     return RaisedButton(
-      color: this.currentPlatform == platform ?  AppColors.deepBlue : Colors.blueGrey[800],
+      color: this.currentPlatform == platform
+          ? AppColors.deepBlue
+          : Colors.blueGrey[800],
       textColor: Colors.white,
       child: Text(name),
       onPressed: () => setPlatform(platform),
